@@ -8,7 +8,7 @@ export default function Footer() {
           <div className="row">
             <div className="col-lg-3 col-md-6 col-sm-6">
               <div className="footer-menu">
-                <img src="/images/logo.png" alt="logo" />
+                <h1 className="fw-bold text-dark m-0" style={{ fontSize: '2rem', letterSpacing: 0.5 }}>Tân Thời Đại <span className="text-primary">Balo</span> Store</h1>
                 <div className="social-links mt-5">
                   <ul className="d-flex list-unstyled gap-2">
                     <li><a href="#" className="btn btn-outline-light">F</a></li>
@@ -57,10 +57,9 @@ export default function Footer() {
         <div className="container-fluid">
           <div className="row">
             <div className="col-md-6 copyright">
-              <p>© 2023 Foodmart. All rights reserved.</p>
+              <p>© 2025 Tân Thời Đại. Tất cả bản quyền được bảo lưu.</p>
             </div>
             <div className="col-md-6 credit-link text-start text-md-end">
-              <p>Free HTML Template by <a href="https://templatesjungle.com/">TemplatesJungle</a> Distributed by <a href="https://themewagon">ThemeWagon</a></p>
             </div>
           </div>
         </div>

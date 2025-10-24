@@ -2,7 +2,7 @@ import React from 'react'
 
 export default function Header() {
   return (
-    <header>
+    <header className="site-header">
       <div className="container-fluid">
         <div className="row py-3 border-bottom">
           <div className="col-sm-4 col-lg-3 text-center text-sm-start">
@@ -56,8 +56,8 @@ export default function Header() {
           </div>
           <div className="col-sm-8 col-lg-4 d-flex gap-5 align-items-center mt-4 mt-sm-0 justify-content-center justify-content-sm-end">
             <div className="support-box text-end d-none d-xl-block">
-              <span className="fs-6 text-muted">For Support?</span>
-              <h5 className="mb-0">+980-34984089</h5>
+              <a href="/products" className="text-decoration-none me-3">Sản phẩm</a>
+              <a href="/about.html" className="text-decoration-none">Giới thiệu</a>
             </div>
             <ul className="d-flex justify-content-end list-unstyled m-0">
               <li>

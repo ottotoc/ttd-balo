@@ -7,7 +7,6 @@ import Footer from './components/layout/Footer.jsx'
 import HeroBanner from './components/sections/HeroBanner.jsx'
 import CategoryCarousel from './components/sections/CategoryCarousel.jsx'
 import BrandCarousel from './components/sections/BrandCarousel.jsx'
-import TrendingTabs from './components/sections/TrendingTabs.jsx'
 import TwoBannerAds from './components/sections/TwoBannerAds.jsx'
 import BestSelling from './components/sections/BestSelling.jsx'
 import DiscountForm from './components/sections/DiscountForm.jsx'
@@ -28,7 +27,7 @@ export default function App() {
       <HeroBanner />
       <CategoryCarousel />
       <BrandCarousel />
-      <TrendingTabs />
+      {/* TrendingTabs removed - using BestSelling instead */}
       <TwoBannerAds />
       <BestSelling />
       <DiscountForm />
