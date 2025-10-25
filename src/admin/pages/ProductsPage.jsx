@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { products, catalog } from '../../lib/api'
+import ImageUpload from '../components/ImageUpload'
+import { slugify } from '../../lib/slugify'
 
 const DISPLAY_SECTIONS = [
   { value: 'bestselling', label: 'Best Selling' },
@@ -27,9 +29,13 @@ export default function ProductsPage() {
     stock: 0,
     categoryId: '',
     brandId: '',
+    imageUrl: '',
+    shortDesc: '',
+    description: '',
     featured: false,
     published: true,
   })
+  const [slugManuallyEdited, setSlugManuallyEdited] = useState(false)
   const [categories, setCategories] = useState([])
   const [brands, setBrands] = useState([])
 
@@ -69,6 +75,7 @@ export default function ProductsPage() {
 
   const resetForm = () => {
     setEditingProduct(null)
+    setSlugManuallyEdited(false)
     setForm({
       name: '',
       slug: '',
@@ -77,6 +84,9 @@ export default function ProductsPage() {
       stock: 0,
       categoryId: '',
       brandId: '',
+      imageUrl: '',
+      shortDesc: '',
+      description: '',
       featured: false,
       published: true,
     })
@@ -89,6 +99,7 @@ export default function ProductsPage() {
 
   const openEdit = (product) => {
     setEditingProduct(product)
+    setSlugManuallyEdited(true) // When editing, consider slug as manually set
     setForm({
       name: product.name || '',
       slug: product.slug || '',
@@ -97,6 +108,9 @@ export default function ProductsPage() {
       stock: product.stock || 0,
       categoryId: product.category?.id || '',
       brandId: product.brand?.id || '',
+      imageUrl: product.images?.[0]?.url || '',
+      shortDesc: product.shortDesc || '',
+      description: product.description || '',
       featured: !!product.featured,
       published: !!product.published,
     })
@@ -113,11 +127,29 @@ export default function ProductsPage() {
     } else if (name === 'categoryId' || name === 'brandId') {
       val = value ? Number(value) : ''
     }
-    setForm((prev) => ({ ...prev, [name]: val }))
+    
+    // Auto-generate slug from name if slug hasn't been manually edited
+    if (name === 'name' && !slugManuallyEdited) {
+      const autoSlug = slugify(value)
+      setForm((prev) => ({ ...prev, name: val, slug: autoSlug }))
+    } else if (name === 'slug') {
+      // Mark slug as manually edited if user changes it
+      setSlugManuallyEdited(true)
+      setForm((prev) => ({ ...prev, [name]: val }))
+    } else {
+      setForm((prev) => ({ ...prev, [name]: val }))
+    }
   }
 
   const handleSubmitForm = async (e) => {
     e.preventDefault()
+    
+    // Validate image
+    if (!form.imageUrl) {
+      alert('⚠️ Vui lòng upload ảnh sản phẩm')
+      return
+    }
+    
     try {
       setSaving(true)
       const payload = {
@@ -128,8 +160,12 @@ export default function ProductsPage() {
         stock: Number(form.stock),
         categoryId: Number(form.categoryId),
         brandId: Number(form.brandId),
+        shortDesc: form.shortDesc || undefined,
+        description: form.description || undefined,
         featured: !!form.featured,
         published: !!form.published,
+        // Thêm images array
+        images: form.imageUrl ? [{ url: form.imageUrl, isPrimary: true, position: 0 }] : undefined,
       }
 
       if (editingProduct) {
@@ -296,7 +332,7 @@ export default function ProductsPage() {
       {/* Modal for create/edit product */}
       {showFormModal && (
         <div className="modal-backdrop" onClick={() => setShowFormModal(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-content modal-lg" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <h5>{editingProduct ? 'Edit Product' : 'Add Product'}</h5>
               <button 
@@ -309,42 +345,71 @@ export default function ProductsPage() {
             </div>
             <form onSubmit={handleSubmitForm}>
               <div className="modal-body">
-                <div className="form-group">
-                  <label>Name</label>
-                  <input
-                    type="text"
-                    name="name"
-                    className="form-control"
-                    value={form.name}
-                    onChange={handleFormChange}
-                    required
+                {/* Image Upload - Full Width */}
+                <div className="form-group-full">
+                  <ImageUpload
+                    value={form.imageUrl}
+                    onChange={(url) => setForm(prev => ({ ...prev, imageUrl: url }))}
+                    label="Ảnh sản phẩm"
+                    required={true}
                   />
                 </div>
-                <div className="form-group">
-                  <label>Slug</label>
-                  <input
-                    type="text"
-                    name="slug"
-                    className="form-control"
-                    value={form.slug}
-                    onChange={handleFormChange}
-                    placeholder="auto from name if empty"
-                  />
-                </div>
-                <div className="form-group">
-                  <label>SKU</label>
-                  <input
-                    type="text"
-                    name="sku"
-                    className="form-control"
-                    value={form.sku}
-                    onChange={handleFormChange}
-                    required
-                  />
-                </div>
-                <div className="form-row" style={{ display: 'flex', gap: 12 }}>
-                  <div className="form-group" style={{ flex: 1 }}>
-                    <label>Price (₫)</label>
+                
+                {/* Form Grid - 2 Columns */}
+                <div className="form-grid">
+                  {/* Name - Full Width */}
+                  <div className="form-group form-group-full">
+                    <label>Tên sản phẩm <span className="text-danger">*</span></label>
+                    <input
+                      type="text"
+                      name="name"
+                      className="form-control"
+                      value={form.name}
+                      onChange={handleFormChange}
+                      placeholder="Nhập tên sản phẩm"
+                      required
+                    />
+                  </div>
+                  
+                  {/* Slug - Full Width */}
+                  <div className="form-group form-group-full">
+                    <label>Slug {!slugManuallyEdited && <span className="text-muted small">(tự động từ tên)</span>}</label>
+                    <input
+                      type="text"
+                      name="slug"
+                      className="form-control"
+                      value={form.slug}
+                      onChange={handleFormChange}
+                      placeholder="Tự động tạo từ tên sản phẩm"
+                      style={{ 
+                        backgroundColor: !slugManuallyEdited ? '#f8f9fa' : 'white',
+                        fontStyle: !slugManuallyEdited ? 'italic' : 'normal'
+                      }}
+                    />
+                    <small className="form-text text-muted">
+                      {slugManuallyEdited 
+                        ? 'Bạn đã tùy chỉnh slug thủ công' 
+                        : '✨ Slug sẽ tự động cập nhật khi bạn nhập tên'}
+                    </small>
+                  </div>
+                  
+                  {/* SKU */}
+                  <div className="form-group">
+                    <label>SKU <span className="text-danger">*</span></label>
+                    <input
+                      type="text"
+                      name="sku"
+                      className="form-control"
+                      value={form.sku}
+                      onChange={handleFormChange}
+                      placeholder="Mã sản phẩm"
+                      required
+                    />
+                  </div>
+                  
+                  {/* Price */}
+                  <div className="form-group">
+                    <label>Giá (₫) <span className="text-danger">*</span></label>
                     <input
                       type="number"
                       name="price"
@@ -353,11 +418,14 @@ export default function ProductsPage() {
                       onChange={handleFormChange}
                       min={0}
                       step={1000}
+                      placeholder="0"
                       required
                     />
                   </div>
-                  <div className="form-group" style={{ flex: 1 }}>
-                    <label>Stock</label>
+                  
+                  {/* Stock */}
+                  <div className="form-group">
+                    <label>Tồn kho <span className="text-danger">*</span></label>
                     <input
                       type="number"
                       name="stock"
@@ -365,13 +433,14 @@ export default function ProductsPage() {
                       value={form.stock}
                       onChange={handleFormChange}
                       min={0}
+                      placeholder="0"
                       required
                     />
                   </div>
-                </div>
-                <div className="form-row" style={{ display: 'flex', gap: 12 }}>
-                  <div className="form-group" style={{ flex: 1 }}>
-                    <label>Category</label>
+                  
+                  {/* Category */}
+                  <div className="form-group">
+                    <label>Danh mục <span className="text-danger">*</span></label>
                     <select
                       name="categoryId"
                       className="form-control"
@@ -379,14 +448,16 @@ export default function ProductsPage() {
                       onChange={handleFormChange}
                       required
                     >
-                      <option value="">Select category</option>
+                      <option value="">-- Chọn danh mục --</option>
                       {categories.map((c) => (
                         <option key={c.id} value={c.id}>{c.name}</option>
                       ))}
                     </select>
                   </div>
-                  <div className="form-group" style={{ flex: 1 }}>
-                    <label>Brand</label>
+                  
+                  {/* Brand */}
+                  <div className="form-group">
+                    <label>Thương hiệu <span className="text-danger">*</span></label>
                     <select
                       name="brandId"
                       className="form-control"
@@ -394,22 +465,74 @@ export default function ProductsPage() {
                       onChange={handleFormChange}
                       required
                     >
-                      <option value="">Select brand</option>
+                      <option value="">-- Chọn thương hiệu --</option>
                       {brands.map((b) => (
                         <option key={b.id} value={b.id}>{b.name}</option>
                       ))}
                     </select>
                   </div>
-                </div>
-                <div className="form-row" style={{ display: 'flex', gap: 12 }}>
-                  <label className="d-flex align-items-center" style={{ gap: 8 }}>
-                    <input type="checkbox" name="featured" checked={form.featured} onChange={handleFormChange} />
-                    Featured
-                  </label>
-                  <label className="d-flex align-items-center" style={{ gap: 8 }}>
-                    <input type="checkbox" name="published" checked={form.published} onChange={handleFormChange} />
-                    Published
-                  </label>
+                  
+                  {/* Short Description - Full Width */}
+                  <div className="form-group form-group-full">
+                    <label>Mô tả ngắn</label>
+                    <textarea
+                      name="shortDesc"
+                      className="form-control"
+                      value={form.shortDesc}
+                      onChange={handleFormChange}
+                      placeholder="Mô tả ngắn gọn về sản phẩm (hiển thị trong card)"
+                      rows={2}
+                    />
+                    <small className="form-text text-muted">
+                      Tối đa 150 ký tự, hiển thị trên card sản phẩm
+                    </small>
+                  </div>
+                  
+                  {/* Description - Full Width */}
+                  <div className="form-group form-group-full">
+                    <label>Mô tả chi tiết</label>
+                    <textarea
+                      name="description"
+                      className="form-control textarea-lg"
+                      value={form.description}
+                      onChange={handleFormChange}
+                      placeholder="Mô tả chi tiết về sản phẩm"
+                      rows={4}
+                    />
+                    <small className="form-text text-muted">
+                      Thông tin chi tiết về sản phẩm (hiển thị trên trang chi tiết)
+                    </small>
+                  </div>
+                  
+                  {/* Checkboxes - Full Width */}
+                  <div className="form-group form-group-full" style={{ display: 'flex', gap: '2rem', marginTop: '0.5rem' }}>
+                    <label className="d-flex align-items-center" style={{ gap: 8, cursor: 'pointer' }}>
+                      <input 
+                        type="checkbox" 
+                        name="featured" 
+                        checked={form.featured} 
+                        onChange={handleFormChange}
+                        style={{ width: '18px', height: '18px' }}
+                      />
+                      <span>
+                        <strong>Featured</strong>
+                        <small className="d-block text-muted">Hiển thị trong mục nổi bật</small>
+                      </span>
+                    </label>
+                    <label className="d-flex align-items-center" style={{ gap: 8, cursor: 'pointer' }}>
+                      <input 
+                        type="checkbox" 
+                        name="published" 
+                        checked={form.published} 
+                        onChange={handleFormChange}
+                        style={{ width: '18px', height: '18px' }}
+                      />
+                      <span>
+                        <strong>Published</strong>
+                        <small className="d-block text-muted">Công khai sản phẩm</small>
+                      </span>
+                    </label>
+                  </div>
                 </div>
               </div>
               <div className="modal-footer">

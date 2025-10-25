@@ -35,7 +35,7 @@ export default function MostPopular() {
       <div className="row g-4">
         {products.map((product) => (
           <div key={product.id} className="col-6 col-md-3">
-            <ProductCard product={product} />
+            <ProductCard product={product} showBadge={true} badgeText="PHỔ BIẾN" />
           </div>
         ))}
       </div>

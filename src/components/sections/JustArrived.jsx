@@ -37,7 +37,7 @@ export default function JustArrived() {
       <div className="row g-4">
         {products.map((product) => (
           <div key={product.id} className="col-6 col-md-3">
-            <ProductCard product={product} />
+            <ProductCard product={product} showBadge={true} badgeText="NEW" />
           </div>
         ))}
       </div>

@@ -12,14 +12,14 @@ export default function ProductsCarousel({ items }) {
       breakpoints={{ 0: { slidesPerView: 1 }, 768: { slidesPerView: 3 }, 991: { slidesPerView: 4 }, 1500: { slidesPerView: 6 } }}
       className="products-carousel"
     >
-      {items.map((p) => (
-        <SwiperSlide key={p.title}>
+      {items.map((p, index) => (
+        <SwiperSlide key={`${p.title}-${index}`}>
           <div className="product-item">
             {p.badge && <span className="badge bg-success position-absolute m-3">{p.badge}</span>}
             <a href="#" className="btn-wishlist"><svg width="24" height="24"><use xlinkHref="#heart"></use></svg></a>
             <figure>
               <a href="#" title={p.title}>
-                <img src={p.img} className="tab-image" />
+                {p.img && <img src={p.img} alt={p.title} className="tab-image" />}
               </a>
             </figure>
             <h3>{p.title}</h3>

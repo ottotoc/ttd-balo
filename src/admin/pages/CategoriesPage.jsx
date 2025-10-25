@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { admin } from '../../lib/api'
+import { slugify } from '../../lib/slugify'
 
 export default function CategoriesPage() {
   const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
   const [editing, setEditing] = useState(null)
-  const [form, setForm] = useState({ name: '', slug: '', imageUrl: '', position: 0 })
+  const [form, setForm] = useState({ name: '', slug: '', position: 0 })
+  const [slugManuallyEdited, setSlugManuallyEdited] = useState(false)
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
@@ -27,7 +29,8 @@ export default function CategoriesPage() {
 
   const resetForm = () => {
     setEditing(null)
-    setForm({ name: '', slug: '', imageUrl: '', position: 0 })
+    setSlugManuallyEdited(false)
+    setForm({ name: '', slug: '', position: 0 })
   }
 
   const openCreate = () => {
@@ -37,10 +40,10 @@ export default function CategoriesPage() {
 
   const openEdit = (category) => {
     setEditing(category)
+    setSlugManuallyEdited(true) // When editing, consider slug as manually set
     setForm({
       name: category.name || '',
       slug: category.slug || '',
-      imageUrl: category.imageUrl || '',
       position: category.position || 0,
     })
     setShowModal(true)
@@ -48,7 +51,18 @@ export default function CategoriesPage() {
 
   const handleChange = (e) => {
     const { name, value } = e.target
-    setForm((prev) => ({ ...prev, [name]: name === 'position' ? Number(value) : value }))
+    
+    // Auto-generate slug from name if slug hasn't been manually edited
+    if (name === 'name' && !slugManuallyEdited) {
+      const autoSlug = slugify(value)
+      setForm((prev) => ({ ...prev, name: value, slug: autoSlug }))
+    } else if (name === 'slug') {
+      // Mark slug as manually edited if user changes it
+      setSlugManuallyEdited(true)
+      setForm((prev) => ({ ...prev, [name]: value }))
+    } else {
+      setForm((prev) => ({ ...prev, [name]: name === 'position' ? Number(value) : value }))
+    }
   }
 
   const handleSubmit = async (e) => {
@@ -98,7 +112,6 @@ export default function CategoriesPage() {
                 <th>ID</th>
                 <th>Name</th>
                 <th>Slug</th>
-                <th>Image</th>
                 <th>Position</th>
                 <th>Products</th>
                 <th>Actions</th>
@@ -110,13 +123,6 @@ export default function CategoriesPage() {
                   <td>{cat.id}</td>
                   <td>{cat.name}</td>
                   <td>{cat.slug}</td>
-                  <td>
-                    {cat.imageUrl ? (
-                      <img src={cat.imageUrl} alt={cat.name} style={{ width: 40, height: 40, objectFit: 'cover', borderRadius: 4 }} />
-                    ) : (
-                      <span className="text-muted small">—</span>
-                    )}
-                  </td>
                   <td>{cat.position}</td>
                   <td>{cat._count?.products || 0}</td>
                   <td>
@@ -164,25 +170,24 @@ export default function CategoriesPage() {
                   />
                 </div>
                 <div className="form-group">
-                  <label>Slug</label>
+                  <label>Slug {!slugManuallyEdited && <span className="text-muted small">(tự động từ tên)</span>}</label>
                   <input
                     type="text"
                     name="slug"
                     className="form-control"
                     value={form.slug}
                     onChange={handleChange}
-                    placeholder="auto from name if empty"
+                    placeholder="Tự động tạo từ tên danh mục"
+                    style={{ 
+                      backgroundColor: !slugManuallyEdited ? '#f8f9fa' : 'white',
+                      fontStyle: !slugManuallyEdited ? 'italic' : 'normal'
+                    }}
                   />
-                </div>
-                <div className="form-group">
-                  <label>Image URL</label>
-                  <input
-                    type="url"
-                    name="imageUrl"
-                    className="form-control"
-                    value={form.imageUrl}
-                    onChange={handleChange}
-                  />
+                  <small className="form-text text-muted">
+                    {slugManuallyEdited 
+                      ? 'Bạn đã tùy chỉnh slug thủ công' 
+                      : '✨ Slug sẽ tự động cập nhật khi bạn nhập tên'}
+                  </small>
                 </div>
                 <div className="form-group">
                   <label>Position</label>
@@ -194,6 +199,9 @@ export default function CategoriesPage() {
                     onChange={handleChange}
                     min={0}
                   />
+                  <small className="form-text text-muted">
+                    Vị trí hiển thị (số nhỏ hơn sẽ hiển thị trước)
+                  </small>
                 </div>
               </div>
               <div className="modal-footer">

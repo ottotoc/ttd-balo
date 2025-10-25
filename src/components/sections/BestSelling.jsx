@@ -48,7 +48,7 @@ export default function BestSelling() {
       <div className="row g-4">
         {products.map((product) => (
           <div key={product.id} className="col-6 col-md-3">
-            <ProductCard product={product} />
+            <ProductCard product={product} showBadge={true} badgeText="HOT" />
           </div>
         ))}
       </div>

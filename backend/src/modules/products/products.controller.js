@@ -225,11 +225,27 @@ const createProduct = asyncHandler(async (req, res) => {
 // Update product (Admin only)
 const updateProduct = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const updateData = { ...req.body };
+  const { images, ...updateData } = req.body;
 
   // Convert displaySections array to JSON string if provided
   if (updateData.displaySections && Array.isArray(updateData.displaySections)) {
     updateData.displaySections = JSON.stringify(updateData.displaySections);
+  }
+
+  // Xử lý cập nhật images nếu có
+  if (images && Array.isArray(images)) {
+    // Xóa images cũ và tạo mới
+    await prisma.productImage.deleteMany({
+      where: { productId: parseInt(id) },
+    });
+    
+    updateData.images = {
+      create: images.map((img, idx) => ({
+        url: img.url,
+        isPrimary: idx === 0,
+        position: idx,
+      }))
+    };
   }
 
   const product = await prisma.product.update({

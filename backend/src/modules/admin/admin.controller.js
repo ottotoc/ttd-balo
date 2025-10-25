@@ -1,7 +1,7 @@
 const prisma = require('../../config/database');
 const asyncHandler = require('../../common/asyncHandler');
 const { success, paginated } = require('../../common/response');
-const { BadRequestError, NotFoundError } = require('../../common/errors');
+const { BadRequestError, NotFoundError, ConflictError } = require('../../common/errors');
 
 // ========== CATEGORIES ==========
 const getCategories = asyncHandler(async (req, res) => {
@@ -104,9 +104,20 @@ const updateBrand = asyncHandler(async (req, res) => {
 
 const deleteBrand = asyncHandler(async (req, res) => {
   const { id } = req.params;
+  const brandId = parseInt(id);
+
+  const productCount = await prisma.product.count({
+    where: { brandId },
+  });
+
+  if (productCount > 0) {
+    throw new ConflictError(
+      `Cannot delete brand: ${productCount} product(s) reference this brand. Reassign or delete those products first.`
+    );
+  }
 
   await prisma.brand.delete({
-    where: { id: parseInt(id) },
+    where: { id: brandId },
   });
 
   success(res, { message: 'Brand deleted successfully' });

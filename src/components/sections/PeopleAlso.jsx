@@ -18,8 +18,8 @@ export default function PeopleAlso() {
     <Section>
       <div className="container-fluid">
         <h2 className="my-5">People are also looking for</h2>
-        {terms.concat(terms).map((t) => (
-          <a key={t} href="#" className="btn btn-warning me-2 mb-2">{t}</a>
+        {terms.concat(terms).map((t, index) => (
+          <a key={`${t}-${index}`} href="#" className="btn btn-warning me-2 mb-2">{t}</a>
         ))}
       </div>
     </Section>

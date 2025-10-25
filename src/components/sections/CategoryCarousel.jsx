@@ -121,7 +121,7 @@ export default function CategoryCarousel() {
         </div>
       </div>
 
-      <div ref={containerRef} style={{ position: 'relative', overflow: 'hidden' }}>
+      <div ref={containerRef} style={{ position: 'relative', overflow: 'hidden', padding: '20px 0' }}>
         <div
           className="d-flex"
           onTransitionEnd={handleTransitionEnd}

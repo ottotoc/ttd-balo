@@ -7,13 +7,31 @@ async function getOrCreateCart(req, res) {
   if (req.user) {
     let cart = await prisma.cart.findFirst({
       where: { userId: Number(req.user.sub) },
-      include: { items: { include: { product: true, variant: true } } },
+      include: { 
+        items: { 
+          include: { 
+            product: { 
+              include: { images: true, category: true, brand: true } 
+            }, 
+            variant: true 
+          } 
+        } 
+      },
     });
     
     if (!cart) {
       cart = await prisma.cart.create({
         data: { userId: Number(req.user.sub) },
-        include: { items: { include: { product: true, variant: true } } },
+        include: { 
+          items: { 
+            include: { 
+              product: { 
+                include: { images: true, category: true, brand: true } 
+              }, 
+              variant: true 
+            } 
+          } 
+        },
       });
     }
     
@@ -34,13 +52,31 @@ async function getOrCreateCart(req, res) {
 
   let cart = await prisma.cart.findFirst({
     where: { sessionId },
-    include: { items: { include: { product: true, variant: true } } },
+    include: { 
+      items: { 
+        include: { 
+          product: { 
+            include: { images: true, category: true, brand: true } 
+          }, 
+          variant: true 
+        } 
+      } 
+    },
   });
 
   if (!cart) {
     cart = await prisma.cart.create({
       data: { sessionId },
-      include: { items: { include: { product: true, variant: true } } },
+      include: { 
+        items: { 
+          include: { 
+            product: { 
+              include: { images: true, category: true, brand: true } 
+            }, 
+            variant: true 
+          } 
+        } 
+      },
     });
   }
 
