@@ -9,6 +9,9 @@ export default function AdminSidebar({ currentPage, onNavigate }) {
     { id: 'brands', label: 'Brands', icon: '🏷️' },
     { id: 'discounts', label: 'Discounts', icon: '💰' },
     { id: 'reviews', label: 'Reviews', icon: '⭐' },
+    { id: 'blog', label: 'Blog', icon: '📝' },
+    { id: 'announcements', label: 'Announcements', icon: '📢' },
+    { id: 'tiktok', label: 'TikTok Videos', icon: '📱' },
   ]
 
   return (

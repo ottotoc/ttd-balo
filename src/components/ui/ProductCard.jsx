@@ -11,13 +11,14 @@ export default function ProductCard({ product, showBadge = false, badgeText = ''
   const primaryImage = product.images?.find(img => img.isPrimary) || product.images?.[0]
   const imageUrl = primaryImage?.url || '/images/product-thumb-1.png'
   
-  // Format price to VND
-  const formattedPrice = Number(product.price).toLocaleString('vi-VN') + ' ₫'
+  // Calculate sale price and discount
+  const hasSalePrice = product.salePrice && product.salePrice > 0 && product.salePrice < product.price
+  const displayPrice = hasSalePrice ? product.salePrice : product.price
+  const formattedPrice = Number(displayPrice).toLocaleString('vi-VN') + ' ₫'
   
-  // Calculate discount percentage if original price exists
-  const hasDiscount = product.originalPrice && product.originalPrice > product.price
-  const discountPercent = hasDiscount 
-    ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
+  // Calculate discount percentage if sale price exists
+  const discountPercent = hasSalePrice 
+    ? Math.round(((product.price - product.salePrice) / product.price) * 100)
     : 0
   
   const handleAddToCart = async (e) => {
@@ -73,7 +74,7 @@ export default function ProductCard({ product, showBadge = false, badgeText = ''
           
           {/* Badges */}
           <div className="product-badges">
-            {hasDiscount && (
+            {hasSalePrice && (
               <span className="badge badge-discount">-{discountPercent}%</span>
             )}
             {showBadge && badgeText && (
@@ -141,9 +142,9 @@ export default function ProductCard({ product, showBadge = false, badgeText = ''
           <div className="product-price-section">
             <div className="price-wrapper">
               <span className="product-price">{formattedPrice}</span>
-              {hasDiscount && (
+              {hasSalePrice && (
                 <span className="original-price">
-                  {Number(product.originalPrice).toLocaleString('vi-VN')} ₫
+                  {Number(product.price).toLocaleString('vi-VN')} ₫
                 </span>
               )}
             </div>

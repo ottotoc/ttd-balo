@@ -160,6 +160,7 @@ const createProduct = asyncHandler(async (req, res) => {
     shortDesc,
     longDesc,
     price,
+    salePrice,
     stock,
     categoryId,
     brandId,
@@ -187,6 +188,7 @@ const createProduct = asyncHandler(async (req, res) => {
       shortDesc,
       longDesc,
       price,
+      salePrice: salePrice || null,
       stock: stock || 0,
       categoryId,
       brandId,
@@ -270,6 +272,15 @@ const updateProduct = asyncHandler(async (req, res) => {
 // Delete product (Admin only)
 const deleteProduct = asyncHandler(async (req, res) => {
   const { id } = req.params;
+
+  // Check if product exists first
+  const existingProduct = await prisma.product.findUnique({
+    where: { id: parseInt(id) },
+  });
+
+  if (!existingProduct) {
+    return error(res, 'Product not found', 404);
+  }
 
   await prisma.product.delete({
     where: { id: parseInt(id) },

@@ -13,7 +13,7 @@ export default function BestSelling() {
   
   if (loading) {
     return (
-      <Section>
+      <Section usePattern={true}>
         <div className="section-header d-flex flex-wrap justify-content-between my-5">
           <h2 className="section-title">Sản phẩm bán chạy</h2>
         </div>
@@ -28,7 +28,7 @@ export default function BestSelling() {
   
   if (error) {
     return (
-      <Section>
+      <Section usePattern={true}>
         <div className="section-header d-flex flex-wrap justify-content-between my-5">
           <h2 className="section-title">Sản phẩm bán chạy</h2>
         </div>
@@ -40,7 +40,7 @@ export default function BestSelling() {
   }
   
   return (
-    <Section>
+    <Section usePattern={true}>
       <div className="section-header d-flex flex-wrap justify-content-between my-5">
         <h2 className="section-title">Sản phẩm bán chạy</h2>
         <a href="/products" className="btn btn-primary">Xem tất cả</a>

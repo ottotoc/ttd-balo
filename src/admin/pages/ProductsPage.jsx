@@ -26,6 +26,7 @@ export default function ProductsPage() {
     slug: '',
     sku: '',
     price: 0,
+    salePrice: 0,
     stock: 0,
     categoryId: '',
     brandId: '',
@@ -81,6 +82,7 @@ export default function ProductsPage() {
       slug: '',
       sku: '',
       price: 0,
+      salePrice: 0,
       stock: 0,
       categoryId: '',
       brandId: '',
@@ -105,6 +107,7 @@ export default function ProductsPage() {
       slug: product.slug || '',
       sku: product.sku || '',
       price: Number(product.price) || 0,
+      salePrice: Number(product.salePrice) || 0,
       stock: product.stock || 0,
       categoryId: product.category?.id || '',
       brandId: product.brand?.id || '',
@@ -122,7 +125,7 @@ export default function ProductsPage() {
     let val = value
     if (type === 'checkbox') {
       val = checked
-    } else if (name === 'price' || name === 'stock') {
+    } else if (name === 'price' || name === 'salePrice' || name === 'stock') {
       val = Number(value)
     } else if (name === 'categoryId' || name === 'brandId') {
       val = value ? Number(value) : ''
@@ -157,6 +160,7 @@ export default function ProductsPage() {
         slug: form.slug || undefined,
         sku: form.sku,
         price: Number(form.price),
+        salePrice: form.salePrice > 0 ? Number(form.salePrice) : null,
         stock: Number(form.stock),
         categoryId: Number(form.categoryId),
         brandId: Number(form.brandId),
@@ -265,7 +269,22 @@ export default function ProductsPage() {
                   <td>{product.id}</td>
                   <td>{product.name}</td>
                   <td>{product.sku}</td>
-                  <td>{Number(product.price).toLocaleString('vi-VN')} ₫</td>
+                  <td>
+                    <div>
+                      {product.salePrice ? (
+                        <>
+                          <div style={{ textDecoration: 'line-through', color: '#999', fontSize: '0.85em' }}>
+                            {Number(product.price).toLocaleString('vi-VN')} ₫
+                          </div>
+                          <div style={{ color: '#e74c3c', fontWeight: 'bold' }}>
+                            {Number(product.salePrice).toLocaleString('vi-VN')} ₫
+                          </div>
+                        </>
+                      ) : (
+                        <div>{Number(product.price).toLocaleString('vi-VN')} ₫</div>
+                      )}
+                    </div>
+                  </td>
                   <td>{product.stock}</td>
                   <td>{product.category?.name}</td>
                   <td>{product.brand?.name}</td>
@@ -409,7 +428,7 @@ export default function ProductsPage() {
                   
                   {/* Price */}
                   <div className="form-group">
-                    <label>Giá (₫) <span className="text-danger">*</span></label>
+                    <label>Giá gốc (₫) <span className="text-danger">*</span></label>
                     <input
                       type="number"
                       name="price"
@@ -421,6 +440,24 @@ export default function ProductsPage() {
                       placeholder="0"
                       required
                     />
+                  </div>
+
+                  {/* Sale Price */}
+                  <div className="form-group">
+                    <label>Giá sale (₫)</label>
+                    <input
+                      type="number"
+                      name="salePrice"
+                      className="form-control"
+                      value={form.salePrice}
+                      onChange={handleFormChange}
+                      min={0}
+                      step={1000}
+                      placeholder="Để trống nếu không sale"
+                    />
+                    <small className="form-text text-muted">
+                      Để trống nếu sản phẩm không có giá sale
+                    </small>
                   </div>
                   
                   {/* Stock */}

@@ -72,7 +72,7 @@ export default function BrandCarousel() {
 
   if (loading) {
     return (
-      <Section>
+      <Section usePattern={true}>
         <div className="section-header d-flex flex-wrap justify-content-between mb-5">
           <h2 className="section-title">Thương hiệu nổi bật</h2>
         </div>
@@ -97,7 +97,7 @@ export default function BrandCarousel() {
     : 0
 
   return (
-    <Section>
+    <Section usePattern={true}>
       <div className="section-header d-flex flex-wrap justify-content-between mb-4">
         <h2 className="section-title">Thương hiệu nổi bật</h2>
         <div className="d-flex align-items-center gap-2">

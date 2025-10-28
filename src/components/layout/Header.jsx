@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { useCart } from '../../contexts/CartContext'
+import AnnouncementBar from './AnnouncementBar'
 
 export default function Header() {
   const { cart } = useCart()
@@ -9,7 +10,9 @@ export default function Header() {
   const formattedTotal = cartTotal.toLocaleString('vi-VN') + ' ₫'
   
   return (
-    <header className="site-header">
+    <>
+      <AnnouncementBar />
+      <header className="site-header">
       <div className="container-fluid">
         <div className="row py-3 border-bottom">
           <div className="col-sm-4 col-lg-3 text-center text-sm-start">
@@ -45,15 +48,16 @@ export default function Header() {
             <div className="search-bar row bg-light p-2 my-2 rounded-4">
               <div className="col-md-4 d-none d-md-block">
                 <select className="form-select border-0 bg-transparent">
-                  <option>All Categories</option>
-                  <option>Groceries</option>
-                  <option>Drinks</option>
-                  <option>Chocolates</option>
+                  <option>Tất cả danh mục</option>
+                  <option>Balo</option>
+                  <option>Túi xách</option>
+                  <option>Vali</option>
                 </select>
+                  
               </div>
               <div className="col-11 col-md-7">
                 <form id="search-form" className="text-center" action="#" method="post">
-                  <input type="text" className="form-control border-0 bg-transparent" placeholder="Search for more than 20,000 products" />
+                  <input type="text" className="form-control border-0 bg-transparent" placeholder="Tìm kiếm với hơn 2,000 sản phẩm" />
                 </form>
               </div>
               <div className="col-1">
@@ -63,7 +67,7 @@ export default function Header() {
           </div>
           <div className="col-sm-8 col-lg-4 d-flex gap-5 align-items-center mt-4 mt-sm-0 justify-content-center justify-content-sm-end">
             <div className="support-box text-end d-none d-xl-block">
-              <Link to="/" className="text-decoration-none me-3">Sản phẩm</Link>
+              <Link to="/products" className="text-decoration-none me-3">Sản phẩm</Link>
               <a href="/about.html" className="text-decoration-none">Giới thiệu</a>
             </div>
             <ul className="d-flex justify-content-end list-unstyled m-0">
@@ -85,7 +89,7 @@ export default function Header() {
                 <span className="fs-6 text-muted">
                   Giỏ hàng
                   {itemCount > 0 && (
-                    <span className="badge bg-danger rounded-pill ms-1" style={{ fontSize: '0.7rem' }}>
+                    <span className="badge bg-danger rounded-pill ms-1" style={{ fontSize: '0.7rem', color: 'black' }}>
                       {itemCount}
                     </span>
                   )}
@@ -97,6 +101,7 @@ export default function Header() {
         </div>
       </div>
     </header>
+    </>
   )
 }
 

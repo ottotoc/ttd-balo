@@ -59,6 +59,7 @@ model Product {
   shortDesc      String?          @db.Text
   longDesc       String?          @db.Text
   price          Decimal          @db.Decimal(10, 2)
+  salePrice      Decimal?         @db.Decimal(10, 2)
   stock          Int              @default(0)
   featured       Boolean          @default(false)
   published      Boolean          @default(true)
@@ -125,6 +126,27 @@ model Banner {
   active    Boolean  @default(true)
   order     Int      @default(0)
   createdAt DateTime @default(now())
+}
+
+model Announcement {
+  id        Int      @id @default(autoincrement())
+  text      String   @db.Text
+  active    Boolean  @default(true)
+  position  Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TikTokVideo {
+  id          Int      @id @default(autoincrement())
+  title       String
+  videoUrl    String   @db.Text // TikTok embed URL or video ID
+  thumbnailUrl String? @db.Text
+  description String?  @db.Text
+  active      Boolean  @default(true)
+  position    Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model BlogPost {

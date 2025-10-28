@@ -15,7 +15,7 @@ const terms = [
 
 export default function PeopleAlso() {
   return (
-    <Section>
+    <Section usePattern={true}>
       <div className="container-fluid">
         <h2 className="my-5">People are also looking for</h2>
         {terms.concat(terms).map((t, index) => (

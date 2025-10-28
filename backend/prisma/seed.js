@@ -420,20 +420,159 @@ async function main() {
   });
   console.log('✅ Discounts created');
 
-  // Create sample blog post
+  // Create sample blog posts
   await prisma.blogPost.upsert({
     where: { slug: 'cach-chon-balo-laptop-phu-hop' },
     update: {},
     create: {
-      title: 'Cách chọn balo laptop phù hợp',
+      title: 'Cách chọn balo laptop phù hợp cho dân văn phòng',
       slug: 'cach-chon-balo-laptop-phu-hop',
-      excerpt: 'Hướng dẫn chi tiết cách chọn balo laptop phù hợp với nhu cầu sử dụng',
-      content: 'Nội dung bài viết về cách chọn balo laptop...',
-      coverUrl: '/images/blog/chon-balo-laptop.jpg',
+      excerpt: 'Hướng dẫn chi tiết cách chọn balo laptop phù hợp với nhu cầu sử dụng, kích thước và phong cách cá nhân.',
+      content: `<h2>Giới thiệu</h2>
+<p>Balo laptop là phụ kiện không thể thiếu đối với dân văn phòng, sinh viên hay những người thường xuyên di chuyển. Việc chọn được một chiếc balo phù hợp không chỉ giúp bảo vệ laptop mà còn mang lại sự thoải mái khi sử dụng.</p>
+
+<h2>1. Kích thước phù hợp</h2>
+<p>Điều đầu tiên cần quan tâm là kích thước của balo có phù hợp với laptop không. Hầu hết các balo laptop có kích thước từ 13-17 inch.</p>
+
+<h2>2. Chất liệu bền bỉ</h2>
+<p>Chất liệu polyester hoặc nylon là lựa chọn tốt vì chống nước và bền bỉ. Một số balo cao cấp còn có lớp đệm chống sốc.</p>
+
+<h2>3. Ngăn chứa hợp lý</h2>
+<p>Balo nên có nhiều ngăn để phân loại đồ dùng, ví dụ như ngăn laptop riêng, ngăn đựng chuột, sạc, và các vật dụng cá nhân.</p>
+
+<h2>Kết luận</h2>
+<p>Chọn balo laptop phù hợp sẽ giúp bạn làm việc hiệu quả hơn và bảo vệ thiết bị tốt hơn. Hãy cân nhắc kỹ các yếu tố trên trước khi quyết định mua.</p>`,
+      coverUrl: '/images/post-thumb-1.jpg',
       published: true,
     },
   });
-  console.log('✅ Blog post created');
+
+  await prisma.blogPost.upsert({
+    where: { slug: 'top-5-tui-xach-nu-thoi-trang' },
+    update: {},
+    create: {
+      title: 'Top 5 mẫu túi xách nữ thời trang hot nhất 2024',
+      slug: 'top-5-tui-xach-nu-thoi-trang',
+      excerpt: 'Khám phá 5 mẫu túi xách nữ được yêu thích nhất năm 2024, từ túi tote đến túi đeo chéo sang trọng.',
+      content: `<h2>Túi xách - Phụ kiện thời trang không thể thiếu</h2>
+<p>Túi xách không chỉ là nơi đựng đồ mà còn là điểm nhấn quan trọng trong phong cách thời trang của phái nữ.</p>
+
+<h2>1. Túi Tote - Đa năng và tiện lợi</h2>
+<p>Túi tote với thiết kế đơn giản, dung lượng lớn, phù hợp cho cả đi làm và đi chơi.</p>
+
+<h2>2. Túi đeo chéo - Năng động</h2>
+<p>Giải phóng đôi tay, phong cách trẻ trung và năng động.</p>
+
+<h2>3. Túi xách công sở - Sang trọng</h2>
+<p>Thiết kế chuyên nghiệp, chất liệu da cao cấp.</p>
+
+<h2>4. Túi mini - Cá tính</h2>
+<p>Nhỏ gọn, dễ thương, phù hợp đi dự tiệc.</p>
+
+<h2>5. Túi bucket - Trendy</h2>
+<p>Xu hướng mới, form dáng độc đáo.</p>`,
+      coverUrl: '/images/post-thumb-2.jpg',
+      published: true,
+    },
+  });
+
+  await prisma.blogPost.upsert({
+    where: { slug: 'huong-dan-bao-quan-balo-dung-cach' },
+    update: {},
+    create: {
+      title: 'Hướng dẫn bảo quản balo đúng cách để bền lâu',
+      slug: 'huong-dan-bao-quan-balo-dung-cach',
+      excerpt: 'Cách vệ sinh và bảo quản balo để sử dụng lâu dài, luôn như mới.',
+      content: `<h2>Tại sao cần bảo quản balo đúng cách?</h2>
+<p>Balo được sử dụng thường xuyên nên dễ bị bẩn và hư hỏng. Bảo quản đúng cách sẽ giúp balo bền đẹp hơn.</p>
+
+<h2>1. Vệ sinh định kỳ</h2>
+<p>Nên vệ sinh balo ít nhất 1 tháng/lần bằng khăn ẩm hoặc giặt tay nhẹ nhàng.</p>
+
+<h2>2. Tránh ánh nắng trực tiếp</h2>
+<p>Ánh nắng mặt trời có thể làm phai màu và hư hỏng chất liệu.</p>
+
+<h2>3. Không để quá tải</h2>
+<p>Đựng đồ vừa phải sẽ giúp balo giữ form dáng đẹp.</p>
+
+<h2>4. Bảo quản đúng cách</h2>
+<p>Khi không dùng, nên treo balo hoặc để ở nơi khô ráo, thoáng mát.</p>`,
+      coverUrl: '/images/post-thumb-3.jpg',
+      published: true,
+    },
+  });
+
+  console.log('✅ Blog posts created');
+
+  // Create sample announcements
+  await prisma.announcement.upsert({
+    where: { id: 1 },
+    update: {},
+    create: {
+      text: '🎉 SALE OFF TỚI 50% TẤT CẢ SẢN PHẨM BALO - MIỄN PHÍ VẬN CHUYỂN ĐƠN TỪ 500K - ƯU ĐÃI CỰC SỐC CHỈ CÓ TRONG THÁNG NÀY! 🎉',
+      active: true,
+      position: 1,
+    },
+  });
+
+  await prisma.announcement.upsert({
+    where: { id: 2 },
+    update: {},
+    create: {
+      text: '🔥 MUA 1 TẶNG 1 - ÁP DỤNG CHO TẤT CẢ SẢN PHẨM TÚI XÁCH - NHANH TAY KẺO HẾT! 🔥',
+      active: true,
+      position: 2,
+    },
+  });
+
+  await prisma.announcement.upsert({
+    where: { id: 3 },
+    update: {},
+    create: {
+      text: '💼 VALI CAO CẤP - GIẢM TỚI 40% - BẢO HÀNH 5 NĂM - CHẤT LƯỢNG HÀNG ĐẦU! 💼',
+      active: true,
+      position: 3,
+    },
+  });
+  console.log('✅ Announcements created');
+
+  // Create sample TikTok videos
+  await prisma.tikTokVideo.upsert({
+    where: { id: 1 },
+    update: {},
+    create: {
+      title: 'Balo Laptop Chống Nước Siêu Bền 💦',
+      videoUrl: 'https://www.tiktok.com/@ttdbalo/video/1234567890',
+      description: 'Review chi tiết balo laptop chống nước cho dân văn phòng',
+      active: true,
+      position: 0,
+    },
+  });
+
+  await prisma.tikTokVideo.upsert({
+    where: { id: 2 },
+    update: {},
+    create: {
+      title: 'Túi Xách Nữ Thời Trang Hot Trend 👜',
+      videoUrl: 'https://www.tiktok.com/@ttdbalo/video/2345678901',
+      description: 'Top 5 mẫu túi xách được yêu thích nhất',
+      active: true,
+      position: 1,
+    },
+  });
+
+  await prisma.tikTokVideo.upsert({
+    where: { id: 3 },
+    update: {},
+    create: {
+      title: 'Vali Du Lịch Size Cabin Sang Xịn ✈️',
+      videoUrl: 'https://www.tiktok.com/@ttdbalo/video/3456789012',
+      description: 'Hướng dẫn chọn vali du lịch phù hợp',
+      active: true,
+      position: 2,
+    },
+  });
+  console.log('✅ TikTok videos created');
 
   console.log('\n🎉 Seed completed for TTD Balo!');
   console.log('\n📝 Admin credentials:');

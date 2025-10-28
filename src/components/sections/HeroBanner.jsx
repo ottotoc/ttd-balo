@@ -16,10 +16,10 @@ export default function HeroBanner() {
                   <SwiperSlide>
                     <div className="row banner-content p-5">
                       <div className="content-wrapper col-md-7">
-                        <div className="categories my-3">100% natural</div>
+                        <div className="categories my-3">100% tự nhiên</div>
                         <h3 className="display-4">Ba lô đa năng</h3>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Dignissim massa diam elementum.</p>
-                        <a href="#" className="btn btn-outline-dark btn-lg text-uppercase fs-6 rounded-1 px-4 py-3 mt-3">Shop Now</a>
+                        <p> Balo đa năng cao cấp, bảo vệ tối ưu cho đồ dùng, laptop</p>
+                        <a href="#" className="btn btn-outline-dark btn-lg text-uppercase fs-6 rounded-1 px-4 py-3 mt-3">Xem ngay</a>
                       </div>
                       <div className="img-wrapper col-md-5">
                         <img src="" className="img-fluid" />
@@ -31,8 +31,8 @@ export default function HeroBanner() {
                       <div className="content-wrapper col-md-7">
                         <div className="categories mb-3 pb-3">100% natural</div>
                         <h3 className="banner-title">Balo học sinh</h3>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Dignissim massa diam elementum.</p>
-                        <a href="#" className="btn btn-outline-dark btn-lg text-uppercase fs-6 rounded-1">Shop Collection</a>
+                        <p>Balo học sinh cao cấp, đa năng tối ưu cho sách vở và đồ dùng học tập</p>
+                        <a href="#" className="btn btn-outline-dark btn-lg text-uppercase fs-6 rounded-1">Xem ngay</a>
                       </div>
                       <div className="img-wrapper col-md-5">
                         <img src="" className="img-fluid" />
@@ -44,8 +44,8 @@ export default function HeroBanner() {
                       <div className="content-wrapper col-md-7">
                         <div className="categories mb-3 pb-3">100% natural</div>
                         <h3 className="banner-title">Balo du lịch</h3>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Dignissim massa diam elementum.</p>
-                        <a href="#" className="btn btn-outline-dark btn-lg text-uppercase fs-6 rounded-1">Shop Collection</a>
+                        <p>Đồng hành cùng bạn trên những chuyến đi xa</p>
+                        <a href="#" className="btn btn-outline-dark btn-lg text-uppercase fs-6 rounded-1">Xem ngay</a>
                       </div>
                       <div className="img-wrapper col-md-5">
                         <img src="" className="img-fluid" />
@@ -58,7 +58,7 @@ export default function HeroBanner() {
                 <div className="row banner-content p-5">
                   <div className="content-wrapper col-md-7">
                     <div className="categories sale mb-3 pb-3">20% off</div>
-                    <h3 className="banner-title">Túi xách</h3>
+                    <h3 className="banner-title">Túi chéo và túi đeo hông</h3>
                     <a href="#" className="d-flex align-items-center nav-link">Shop Collection <svg width="24" height="24"><use xlinkHref="#arrow-right"></use></svg></a>
                   </div>
                 </div>
@@ -67,7 +67,7 @@ export default function HeroBanner() {
                 <div className="row banner-content p-5">
                   <div className="content-wrapper col-md-7">
                     <div className="categories sale mb-3 pb-3">15% off</div>
-                    <h3 className="item-title">Túi chéo và túi đeo hông</h3>
+                    <h3 className="item-title">Vali du lịch</h3>
                     <a href="#" className="d-flex align-items-center nav-link">Shop Collection <svg width="24" height="24"><use xlinkHref="#arrow-right"></use></svg></a>
                   </div>
                 </div>

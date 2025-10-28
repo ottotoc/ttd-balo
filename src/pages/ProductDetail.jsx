@@ -83,10 +83,13 @@ export default function ProductDetail() {
 
   const primaryImage = product.images?.find(img => img.isPrimary) || product.images?.[0]
   const imageUrl = primaryImage?.url || '/images/product-thumb-1.png'
-  const formattedPrice = Number(product.price).toLocaleString('vi-VN') + ' ₫'
-  const hasDiscount = product.originalPrice && product.originalPrice > product.price
-  const discountPercent = hasDiscount 
-    ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
+  
+  // Calculate sale price and discount
+  const hasSalePrice = product.salePrice && product.salePrice > 0 && product.salePrice < product.price
+  const displayPrice = hasSalePrice ? product.salePrice : product.price
+  const formattedPrice = Number(displayPrice).toLocaleString('vi-VN') + ' ₫'
+  const discountPercent = hasSalePrice 
+    ? Math.round(((product.price - product.salePrice) / product.price) * 100)
     : 0
 
   return (
@@ -126,7 +129,7 @@ export default function ProductDetail() {
                     className="img-fluid rounded"
                     style={{ width: '100%', objectFit: 'cover', maxHeight: '600px' }}
                   />
-                  {hasDiscount && (
+                  {hasSalePrice && (
                     <div className="badge-discount">-{discountPercent}%</div>
                   )}
                 </div>
@@ -200,9 +203,9 @@ export default function ProductDetail() {
                 <div className="product-price mb-4">
                   <div className="d-flex align-items-center gap-3">
                     <h2 className="price mb-0">{formattedPrice}</h2>
-                    {hasDiscount && (
+                    {hasSalePrice && (
                       <span className="original-price text-decoration-line-through text-muted">
-                        {Number(product.originalPrice).toLocaleString('vi-VN')} ₫
+                        {Number(product.price).toLocaleString('vi-VN')} ₫
                       </span>
                     )}
                   </div>

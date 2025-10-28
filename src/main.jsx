@@ -5,6 +5,7 @@ import { CartProvider } from './contexts/CartContext.jsx'
 import HomePage from './pages/HomePage.jsx'
 import ProductDetail from './pages/ProductDetail.jsx'
 import CartPage from './pages/CartPage.jsx'
+import ProductsPage from './pages/ProductsPage.jsx'
 
 // Global styles
 import 'bootstrap/dist/css/bootstrap.min.css'
@@ -25,6 +26,7 @@ if (container) {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/products" element={<ProductsPage />} />
           <Route path="/product/:slug" element={<ProductDetail />} />
           <Route path="/cart" element={<CartPage />} />
           {/* Add more routes as needed */}

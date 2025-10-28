@@ -13,7 +13,7 @@ export default function JustArrived() {
   
   if (loading) {
     return (
-      <Section>
+      <Section usePattern={true}>
         <div className="section-header d-flex justify-content-between">
           <h2 className="section-title">Sản phẩm mới về</h2>
         </div>
@@ -29,7 +29,7 @@ export default function JustArrived() {
   if (error) return null
   
   return (
-    <Section>
+    <Section usePattern={true}>
       <div className="section-header d-flex justify-content-between mb-4">
         <h2 className="section-title">Sản phẩm mới về</h2>
         <a href="/products?sort=new" className="btn btn-outline-primary btn-sm">Xem tất cả</a>

@@ -3,7 +3,7 @@ import Section from '../layout/Section.jsx'
 
 export default function AppPromo() {
   return (
-    <Section>
+    <Section usePattern={false}>
       
     </Section>
   )

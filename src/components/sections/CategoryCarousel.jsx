@@ -70,7 +70,7 @@ export default function CategoryCarousel() {
 
   if (loading) {
     return (
-      <Section>
+      <Section usePattern={false}>
         <div className="section-header d-flex flex-wrap justify-content-between mb-5">
           <h2 className="section-title">Danh mục sản phẩm</h2>
         </div>
@@ -93,7 +93,7 @@ export default function CategoryCarousel() {
   const translateX = hasExtra ? -(currentIndex * stepPx) : 0
 
   return (
-    <Section>
+    <Section usePattern={false}>
       <div className="section-header d-flex flex-wrap justify-content-between mb-4">
         <h2 className="section-title">Danh mục sản phẩm</h2>
         <div className="d-flex align-items-center gap-2">

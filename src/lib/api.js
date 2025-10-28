@@ -180,13 +180,42 @@ export const catalog = {
   },
 };
 
+// ========== ANNOUNCEMENTS ==========
+export const announcements = {
+  getActive: () => apiCall('/api/announcements/active'),
+};
+
+// ========== TIKTOK VIDEOS ==========
+export const tiktokVideos = {
+  getActive: () => apiCall('/api/tiktok-videos/active'),
+};
+
 export const blog = {
   getAll: (params = {}) => {
     const query = new URLSearchParams(params).toString();
     return apiCall(`/api/blog${query ? '?' + query : ''}`);
   },
   
+  getPublished: (limit) => {
+    const query = limit ? `?limit=${limit}` : '';
+    return apiCall(`/api/blog/published${query}`);
+  },
+  
   getBySlug: (slug) => apiCall(`/api/blog/${slug}`),
+  
+  getById: (id) => apiCall(`/api/blog/id/${id}`),
+  
+  create: (data) => apiCall('/api/blog', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  }),
+  
+  update: (id, data) => apiCall(`/api/blog/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  }),
+  
+  delete: (id) => apiCall(`/api/blog/${id}`, { method: 'DELETE' }),
 };
 
 // ========== ADMIN ==========
@@ -267,6 +296,36 @@ export const admin = {
     }),
     delete: (id) => apiCall(`/api/admin/blog/${id}`, { method: 'DELETE' }),
   },
+  
+  // Announcements
+  announcements: {
+    getAll: () => apiCall('/api/announcements'),
+    getById: (id) => apiCall(`/api/announcements/${id}`),
+    create: (data) => apiCall('/api/announcements', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+    update: (id, data) => apiCall(`/api/announcements/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }),
+    delete: (id) => apiCall(`/api/announcements/${id}`, { method: 'DELETE' }),
+  },
+  
+  // TikTok Videos
+  tiktokVideos: {
+    getAll: () => apiCall('/api/tiktok-videos'),
+    getById: (id) => apiCall(`/api/tiktok-videos/${id}`),
+    create: (data) => apiCall('/api/tiktok-videos', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+    update: (id, data) => apiCall(`/api/tiktok-videos/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }),
+    delete: (id) => apiCall(`/api/tiktok-videos/${id}`, { method: 'DELETE' }),
+  },
 };
 
 // ========== UPLOADS ==========
@@ -293,5 +352,7 @@ export default {
   blog,
   admin,
   uploads,
+  announcements,
+  tiktokVideos,
 };
 
