@@ -9,6 +9,10 @@ export default function Footer() {
             <div className="col-lg-3 col-md-6 col-sm-6">
               <div className="footer-menu">
                 <h1 className="fw-bold text-dark m-0" style={{ fontSize: '2rem', letterSpacing: 0.5 }}>Tân Thời Đại <span className="text-primary">Balo</span> Store</h1>
+                <p className="mt-3 mb-0">
+                  <strong>Công ty TNHH TM-DV-XNK Tân Thời Đại</strong><br/>
+                  Địa chỉ: 654/1C Phạm Văn Chí, phường Bình Tiên, Tp. Hồ Chí Minh
+                </p>
                 <div className="social-links mt-5">
                   <ul className="d-flex list-unstyled gap-2">
                     <li><a href="#" className="btn btn-outline-light">F</a></li>
@@ -21,32 +25,32 @@ export default function Footer() {
             </div>
             <div className="col-md-2 col-sm-6">
               <div className="footer-menu">
-                <h5 className="widget-title">Ultras</h5>
+                <h5 className="widget-title">Về chúng tôi</h5>
                 <ul className="menu-list list-unstyled">
-                  <li className="menu-item"><a href="#" className="nav-link">About us</a></li>
-                  <li className="menu-item"><a href="#" className="nav-link">Conditions</a></li>
-                  <li className="menu-item"><a href="#" className="nav-link">Our Journals</a></li>
-                  <li className="menu-item"><a href="#" className="nav-link">Careers</a></li>
+                  <li className="menu-item"><a href="#" className="nav-link">Giới thiệu</a></li>
+                  <li className="menu-item"><a href="#" className="nav-link">Điều khoản</a></li>
+                  <li className="menu-item"><a href="#" className="nav-link">Blog</a></li>
+                  <li className="menu-item"><a href="#" className="nav-link">Tuyển dụng</a></li>
                 </ul>
               </div>
             </div>
             <div className="col-md-2 col-sm-6">
               <div className="footer-menu">
-                <h5 className="widget-title">Customer Service</h5>
+                <h5 className="widget-title">Hỗ trợ khách hàng</h5>
                 <ul className="menu-list list-unstyled">
-                  <li className="menu-item"><a href="#" className="nav-link">FAQ</a></li>
-                  <li className="menu-item"><a href="#" className="nav-link">Contact</a></li>
-                  <li className="menu-item"><a href="#" className="nav-link">Privacy Policy</a></li>
+                  <li className="menu-item"><a href="#" className="nav-link">Câu hỏi thường gặp</a></li>
+                  <li className="menu-item"><a href="#" className="nav-link">Liên hệ</a></li>
+                  <li className="menu-item"><a href="#" className="nav-link">Chính sách bảo mật</a></li>
                 </ul>
               </div>
             </div>
             <div className="col-lg-3 col-md-6 col-sm-6">
               <div className="footer-menu">
-                <h5 className="widget-title">Subscribe Us</h5>
-                <p>Subscribe to our newsletter to get updates about our grand offers.</p>
+                <h5 className="widget-title">Đăng ký nhận tin</h5>
+                <p>Đăng ký để nhận ưu đãi và thông tin sản phẩm mới từ Tân Thời Đại.</p>
                 <form className="d-flex mt-3 gap-0" role="newsletter">
-                  <input className="form-control rounded-start rounded-0 bg-light" type="email" placeholder="Email Address" aria-label="Email Address" />
-                  <button className="btn btn-dark rounded-end rounded-0" type="submit">Subscribe</button>
+                  <input className="form-control rounded-start rounded-0 bg-light" type="email" placeholder="Địa chỉ email" aria-label="Địa chỉ email" />
+                  <button className="btn btn-dark rounded-end rounded-0" type="submit">Đăng ký</button>
                 </form>
               </div>
             </div>

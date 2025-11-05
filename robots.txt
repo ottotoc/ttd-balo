@@ -1,0 +1,16 @@
+User-agent: *
+Allow: /
+
+# Block admin area
+Disallow: /admin
+Disallow: /admin.html
+
+# Block source directories
+Disallow: /src/
+Disallow: /backend/
+Disallow: /node_modules/
+
+# Update to your real domain
+Sitemap: https://example.com/sitemap.xml
+
+

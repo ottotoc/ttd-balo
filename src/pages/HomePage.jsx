@@ -5,8 +5,6 @@ import OffcanvasSearch from '../components/layout/OffcanvasSearch.jsx'
 import Header from '../components/layout/Header.jsx'
 import Footer from '../components/layout/Footer.jsx'
 import HeroBanner from '../components/sections/HeroBanner.jsx'
-import CategoryCarousel from '../components/sections/CategoryCarousel.jsx'
-import BrandCarousel from '../components/sections/BrandCarousel.jsx'
 import TwoBannerAds from '../components/sections/TwoBannerAds.jsx'
 import BestSelling from '../components/sections/BestSelling.jsx'
 import SocialProofSection from '../components/sections/SocialProofSection.jsx'
@@ -29,8 +27,6 @@ export default function HomePage() {
       <OffcanvasSearch />
       <Header />
       <HeroBanner />
-      <CategoryCarousel />
-      <BrandCarousel />
       <TwoBannerAds />
       <BestSelling />
       <SocialProofSection />

@@ -68,7 +68,7 @@ export default function Header() {
           <div className="col-sm-8 col-lg-4 d-flex gap-5 align-items-center mt-4 mt-sm-0 justify-content-center justify-content-sm-end">
             <div className="support-box text-end d-none d-xl-block">
               <Link to="/products" className="text-decoration-none me-3">Sản phẩm</Link>
-              <a href="/about.html" className="text-decoration-none">Giới thiệu</a>
+              <Link to="/about" className="text-decoration-none">Giới thiệu</Link>
             </div>
             <ul className="d-flex justify-content-end list-unstyled m-0">
               <li>

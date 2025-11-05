@@ -1,0 +1,1462 @@
+/* ============================================
+   MOBILE RESPONSIVE CSS - iPhone & Mobile Devices
+   Chuyên dụng cho các thiết bị iPhone và mobile
+   ============================================ */
+
+/* ============================================
+   GENERAL MOBILE STYLES
+   ============================================ */
+
+/* Base mobile styles */
+@media screen and (max-width: 767px) {
+  /* Container adjustments */
+  .container-fluid {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+
+  /* Typography adjustments */
+  body {
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  h1 {
+    font-size: 1.75rem !important;
+  }
+
+  h2 {
+    font-size: 1.5rem !important;
+  }
+
+  h3 {
+    font-size: 1.25rem !important;
+  }
+
+  h4 {
+    font-size: 1.1rem !important;
+  }
+
+  h5 {
+    font-size: 1rem !important;
+  }
+
+  /* Remove horizontal scroll */
+  body {
+    overflow-x: hidden;
+  }
+
+  /* Fix for iOS Safari viewport */
+  @supports (-webkit-touch-callout: none) {
+    body {
+      -webkit-text-size-adjust: 100%;
+    }
+  }
+}
+
+/* ============================================
+   HEADER RESPONSIVE
+   ============================================ */
+
+/* Mobile Header Icon Buttons */
+@media screen and (max-width: 767px) {
+  .site-header ul li {
+    position: relative;
+  }
+
+  .site-header ul li a {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 !important;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+  }
+
+  .site-header ul li a:hover {
+    background: #f0f0f0 !important;
+    transform: scale(1.05);
+  }
+
+  .site-header ul li a svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  /* Cart badge on mobile */
+  .site-header ul li.position-relative .badge {
+    position: absolute !important;
+    top: -2px !important;
+    right: -2px !important;
+    font-size: 0.6rem !important;
+    min-width: 18px !important;
+    height: 18px !important;
+    padding: 0 4px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border: 2px solid white;
+    z-index: 10;
+  }
+
+  /* Icon list spacing */
+  .site-header ul {
+    gap: 8px;
+  }
+
+  .site-header ul li {
+    margin: 0;
+  }
+
+  /* Gap between elements */
+  .site-header .d-flex.gap-5 {
+    gap: 15px !important;
+  }
+}
+
+/* iPhone SE and smaller (320px - 374px) */
+@media screen and (max-width: 374px) {
+  .site-header {
+    padding: 10px 0 !important;
+  }
+
+  .main-logo span {
+    font-size: 1.1rem !important;
+    padding: 0.3em 0.8em !important;
+  }
+
+  .main-logo span span {
+    font-size: 0.9rem !important;
+    margin-left: 5px !important;
+  }
+
+  .cart-total {
+    font-size: 0.9rem !important;
+  }
+}
+
+/* iPhone 12/13/14 (375px - 389px) */
+@media screen and (min-width: 375px) and (max-width: 389px) {
+  .site-header {
+    padding: 12px 0 !important;
+  }
+
+  .main-logo span {
+    font-size: 1.2rem !important;
+  }
+}
+
+/* iPhone 14 Pro Max and larger phones (390px - 428px) */
+@media screen and (min-width: 390px) and (max-width: 428px) {
+  .site-header {
+    padding: 12px 0 !important;
+  }
+}
+
+/* All mobile devices */
+@media screen and (max-width: 767px) {
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .site-header .row {
+    align-items: center;
+  }
+
+  .main-logo {
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  .main-logo span {
+    font-size: 1.3rem;
+    padding: 0.4em 0.9em;
+    display: inline-block;
+  }
+
+  .main-logo span span {
+    font-size: 1rem;
+    margin-left: 8px;
+  }
+
+  /* Hide desktop search bar */
+  .search-bar {
+    display: none !important;
+  }
+
+  /* Cart icon adjustments */
+  .cart {
+    text-align: center;
+  }
+
+  .cart-total {
+    font-size: 1rem;
+  }
+
+  /* Icon buttons - handled above */
+
+  /* Support box */
+  .support-box {
+    display: none !important;
+  }
+}
+
+/* ============================================
+   ANNOUNCEMENT BAR RESPONSIVE
+   ============================================ */
+
+@media screen and (max-width: 767px) {
+  .announcement-bar {
+    padding: 8px 0;
+    font-size: 11px;
+  }
+
+  .announcement-text {
+    padding: 0 20px;
+    font-size: 11px;
+  }
+}
+
+/* ============================================
+   HERO BANNER RESPONSIVE
+   ============================================ */
+
+@media screen and (max-width: 767px) {
+  .banner-blocks {
+    grid-template-columns: 1fr !important;
+    grid-template-rows: auto !important;
+    grid-gap: 15px !important;
+  }
+
+  .block-1,
+  .block-2,
+  .block-3 {
+    grid-area: auto !important;
+  }
+
+  .banner-ad {
+    min-height: auto !important;
+    border-radius: 12px;
+  }
+
+  .banner-ad.large .banner-content {
+    padding: 30px 20px !important;
+  }
+
+  .banner-ad .banner-content {
+    padding: 25px 20px !important;
+  }
+
+  .banner-content .row {
+    flex-direction: column;
+  }
+
+  .banner-content .content-wrapper {
+    margin-bottom: 20px;
+  }
+
+  .banner-content .img-wrapper {
+    order: -1;
+    margin-bottom: 15px;
+  }
+
+  .banner-ad .banner-content .categories {
+    font-size: 24px !important;
+    margin-bottom: 10px !important;
+  }
+
+  .banner-ad .banner-content .banner-title {
+    font-size: 22px !important;
+    margin-bottom: 15px;
+  }
+
+  .banner-ad.large .banner-content .banner-title {
+    font-size: 28px !important;
+  }
+
+  .banner-content p {
+    font-size: 14px;
+    margin-bottom: 15px;
+  }
+
+  .banner-content .btn {
+    font-size: 14px;
+    padding: 10px 20px;
+  }
+
+  .banner-ad .swiper-slide {
+    min-height: auto !important;
+  }
+
+  .banner-ad .swiper-pagination {
+    bottom: 15px !important;
+  }
+}
+
+/* iPhone specific */
+@media screen and (max-width: 428px) {
+  .banner-ad .banner-content .categories {
+    font-size: 20px !important;
+  }
+
+  .banner-ad .banner-content .banner-title {
+    font-size: 20px !important;
+  }
+
+  .banner-ad.large .banner-content .banner-title {
+    font-size: 24px !important;
+  }
+}
+
+/* ============================================
+   CATEGORY CAROUSEL RESPONSIVE
+   ============================================ */
+
+@media screen and (max-width: 767px) {
+  .category-carousel .category-item {
+    padding: 30px 15px !important;
+    margin: 10px 0 !important;
+  }
+
+  .category-carousel .category-item .category-title {
+    font-size: 16px !important;
+    margin-top: 15px !important;
+  }
+
+  .category-carousel .category-item img {
+    max-width: 80px;
+    height: auto;
+  }
+}
+
+/* ============================================
+   BRAND CAROUSEL RESPONSIVE
+   ============================================ */
+
+@media screen and (max-width: 767px) {
+  .brand-carousel .brand-item {
+    padding: 12px !important;
+  }
+
+  .brand-carousel .brand-item img {
+    max-height: 60px;
+    object-fit: contain;
+  }
+}
+
+/* ============================================
+   PRODUCT CARDS RESPONSIVE
+   ============================================ */
+
+@media screen and (max-width: 767px) {
+  .modern-product-card {
+    margin-bottom: 20px;
+  }
+
+  .product-image-wrapper {
+    height: 200px !important;
+  }
+
+  .product-info {
+    padding: 15px !important;
+  }
+
+  .product-title {
+    font-size: 14px !important;
+    min-height: 40px !important;
+    line-height: 1.3 !important;
+  }
+
+  .product-price {
+    font-size: 18px !important;
+  }
+
+  .original-price {
+    font-size: 12px !important;
+  }
+
+  .btn-add-to-cart {
+    padding: 12px 16px !important;
+    font-size: 13px !important;
+  }
+
+  .product-category {
+    font-size: 10px !important;
+    padding: 3px 8px !important;
+  }
+
+  .product-rating {
+    margin: 6px 0 !important;
+  }
+
+  .rating-text {
+    font-size: 11px !important;
+  }
+
+  .product-description {
+    font-size: 12px !important;
+    display: none; /* Hide on mobile */
+  }
+}
+
+/* iPhone SE and smaller */
+@media screen and (max-width: 374px) {
+  .product-image-wrapper {
+    height: 180px !important;
+  }
+
+  .product-title {
+    font-size: 13px !important;
+    min-height: 36px !important;
+  }
+
+  .product-price {
+    font-size: 16px !important;
+  }
+}
+
+/* ============================================
+   PRODUCT DETAIL PAGE RESPONSIVE
+   ============================================ */
+
+@media screen and (max-width: 767px) {
+  .product-detail-section {
+    padding: 20px 0 !important;
+  }
+
+  .product-images {
+    margin-bottom: 20px;
+  }
+
+  .main-image {
+    padding: 15px !important;
+    margin-bottom: 15px;
+  }
+
+  .main-image img {
+    max-height: 400px !important;
+  }
+
+  .badge-discount {
+    top: 20px !important;
+    left: 20px !important;
+    padding: 6px 12px !important;
+    font-size: 12px !important;
+  }
+
+  .thumbnails {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 10px;
+  }
+
+  .thumbnails .thumbnail {
+    min-width: 80px;
+    width: 80px;
+    height: 80px;
+  }
+
+  .thumbnails .thumbnail img {
+    width: 100%;
+    height: 100%;
+  }
+
+  .product-info {
+    padding: 20px !important;
+  }
+
+  .product-title {
+    font-size: 1.25rem !important;
+    margin-bottom: 15px !important;
+  }
+
+  .product-price .price {
+    font-size: 1.75rem !important;
+  }
+
+  .product-price .original-price {
+    font-size: 1.2rem !important;
+  }
+
+  .quantity-selector {
+    width: 100%;
+    max-width: 200px;
+  }
+
+  .quantity-selector button {
+    padding: 10px 14px !important;
+  }
+
+  .quantity-selector input {
+    width: 60px !important;
+    font-size: 1rem !important;
+  }
+
+  .add-to-cart-section .btn-primary {
+    padding: 14px 24px !important;
+    font-size: 1rem !important;
+    width: 100%;
+  }
+
+  .product-description {
+    padding: 25px 15px !important;
+  }
+
+  .product-description h3 {
+    font-size: 1.25rem !important;
+    margin-bottom: 15px !important;
+  }
+
+  .description-content p {
+    font-size: 14px !important;
+    line-height: 1.6 !important;
+  }
+}
+
+/* iPhone specific */
+@media screen and (max-width: 428px) {
+  .main-image img {
+    max-height: 350px !important;
+  }
+
+  .product-title {
+    font-size: 1.15rem !important;
+  }
+
+  .product-price .price {
+    font-size: 1.5rem !important;
+  }
+}
+
+/* ============================================
+   PRODUCTS PAGE RESPONSIVE
+   ============================================ */
+
+@media screen and (max-width: 767px) {
+  .products-page-card {
+    margin-bottom: 20px;
+  }
+
+  .products-page-card .card-img-top {
+    height: 180px !important;
+  }
+
+  .products-page-featured-badge {
+    font-size: 10px !important;
+    padding: 4px 8px !important;
+  }
+
+  .products-page-stock-badge {
+    font-size: 10px !important;
+    padding: 4px 8px !important;
+  }
+
+  .products-page-category-badge,
+  .products-page-brand-badge {
+    font-size: 10px !important;
+    padding: 3px 6px !important;
+  }
+
+  .products-page-price {
+    font-size: 16px !important;
+  }
+
+  .products-page-card .card-title {
+    font-size: 1rem !important;
+  }
+
+  .products-page-card .btn {
+    font-size: 13px !important;
+    padding: 8px 16px !important;
+  }
+
+  /* Filters */
+  .container .card-body .row .col-md-4,
+  .container .card-body .row .col-md-2 {
+    margin-bottom: 15px;
+  }
+
+  /* Sort panel */
+  .col-lg-3.order-1 {
+    margin-bottom: 20px;
+  }
+
+  .products-page-sort-btn {
+    font-size: 14px !important;
+    padding: 10px 15px !important;
+  }
+}
+
+/* ============================================
+   CART PAGE RESPONSIVE
+   ============================================ */
+
+@media screen and (max-width: 767px) {
+  .cart-section {
+    padding: 20px 0 !important;
+  }
+
+  .page-title {
+    font-size: 1.75rem !important;
+    margin-bottom: 20px !important;
+  }
+
+  .empty-cart {
+    padding: 40px 20px !important;
+  }
+
+  .empty-cart-icon svg {
+    width: 80px !important;
+    height: 80px !important;
+  }
+
+  .cart-items {
+    padding: 20px 15px !important;
+  }
+
+  .cart-item-content {
+    grid-template-columns: 100px 1fr !important;
+    gap: 12px !important;
+    padding: 12px !important;
+  }
+
+  .cart-item-image {
+    width: 100px !important;
+    height: 100px !important;
+    grid-row: 1 / 3;
+  }
+
+  .cart-item-info {
+    grid-column: 2;
+  }
+
+  .cart-item-title {
+    font-size: 1rem !important;
+    margin-bottom: 8px !important;
+  }
+
+  .cart-item-sku {
+    font-size: 0.85rem !important;
+  }
+
+  .cart-item-price {
+    display: none !important;
+  }
+
+  .cart-item-price-mobile {
+    display: block !important;
+    font-size: 1rem !important;
+    margin-top: 8px !important;
+  }
+
+  .cart-item-quantity {
+    grid-column: 2;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .quantity-selector-small {
+    width: auto;
+  }
+
+  .quantity-selector-small button {
+    padding: 8px 12px !important;
+  }
+
+  .quantity-selector-small input {
+    width: 50px !important;
+    padding: 6px !important;
+  }
+
+  .cart-item-total {
+    font-size: 1.2rem !important;
+    text-align: left !important;
+    min-width: auto !important;
+    margin-top: 10px;
+  }
+
+  .cart-item-remove {
+    position: absolute !important;
+    top: 12px !important;
+    right: 12px !important;
+  }
+
+  .btn-remove {
+    width: 36px !important;
+    height: 36px !important;
+  }
+
+  .order-summary {
+    position: static !important;
+    margin-top: 30px !important;
+    padding: 20px 15px !important;
+  }
+
+  .total-amount {
+    font-size: 1.5rem !important;
+  }
+
+  .trust-badges {
+    padding: 15px !important;
+  }
+
+  .trust-item {
+    font-size: 0.8rem !important;
+    padding: 6px 0 !important;
+  }
+}
+
+/* iPhone specific */
+@media screen and (max-width: 428px) {
+  .cart-item-content {
+    grid-template-columns: 90px 1fr !important;
+    padding: 10px !important;
+  }
+
+  .cart-item-image {
+    width: 90px !important;
+    height: 90px !important;
+  }
+
+  .cart-item-title {
+    font-size: 0.95rem !important;
+  }
+}
+
+/* ============================================
+   FOOTER RESPONSIVE
+   ============================================ */
+
+@media screen and (max-width: 767px) {
+  footer {
+    padding: 40px 0 !important;
+  }
+
+  footer .col-lg-3,
+  footer .col-md-6,
+  footer .col-md-2,
+  footer .col-sm-6 {
+    margin-bottom: 30px;
+  }
+
+  footer h1 {
+    font-size: 1.5rem !important;
+  }
+
+  footer .widget-title {
+    font-size: 1.1rem !important;
+    margin-bottom: 15px !important;
+  }
+
+  footer .menu-list {
+    padding-left: 0;
+  }
+
+  footer .menu-item {
+    margin-bottom: 10px;
+  }
+
+  footer .menu-item a {
+    font-size: 14px;
+  }
+
+  footer .social-links {
+    margin-top: 20px !important;
+  }
+
+  footer .social-links .btn {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  footer form {
+    flex-direction: column;
+  }
+
+  footer form .form-control {
+    margin-bottom: 10px;
+    border-radius: 8px !important;
+  }
+
+  footer form .btn {
+    border-radius: 8px !important;
+    width: 100%;
+  }
+
+  #footer-bottom {
+    padding: 20px 0 !important;
+    text-align: center;
+  }
+
+  #footer-bottom .copyright,
+  #footer-bottom .credit-link {
+    text-align: center !important;
+    margin-bottom: 10px;
+  }
+}
+
+/* ============================================
+   SECTION RESPONSIVE
+   ============================================ */
+
+@media screen and (max-width: 767px) {
+  section {
+    padding: 30px 0 !important;
+  }
+
+  .section-title {
+    font-size: 1.5rem !important;
+    margin-bottom: 20px !important;
+  }
+
+  .swiper-prev,
+  .swiper-next {
+    width: 32px !important;
+    height: 32px !important;
+    line-height: 32px !important;
+  }
+
+  .btn-link {
+    margin-right: 15px !important;
+    font-size: 14px !important;
+  }
+}
+
+/* ============================================
+   TIKTOK SECTION RESPONSIVE
+   ============================================ */
+
+@media screen and (max-width: 767px) {
+  .tiktok-video-card .card-title {
+    font-size: 0.95rem !important;
+  }
+
+  .tiktok-video-card .card-text {
+    font-size: 0.85rem !important;
+  }
+
+  .tiktok-embed-wrapper {
+    padding-top: 177.78% !important;
+  }
+}
+
+/* ============================================
+   BLOG SECTION RESPONSIVE
+   ============================================ */
+
+@media screen and (max-width: 767px) {
+  .post-item {
+    margin-bottom: 25px;
+  }
+
+  .post-item .post-meta {
+    font-size: 0.75rem !important;
+  }
+
+  .post-item h5 {
+    font-size: 1rem !important;
+  }
+}
+
+/* ============================================
+   FORM ELEMENTS RESPONSIVE
+   ============================================ */
+
+@media screen and (max-width: 767px) {
+  .form-control,
+  .form-select {
+    font-size: 14px !important;
+    padding: 10px 12px !important;
+  }
+
+  .btn {
+    font-size: 14px !important;
+    padding: 10px 20px !important;
+  }
+
+  .btn-lg {
+    font-size: 16px !important;
+    padding: 12px 24px !important;
+  }
+
+  .btn-sm {
+    font-size: 12px !important;
+    padding: 6px 12px !important;
+  }
+}
+
+/* ============================================
+   PAGINATION RESPONSIVE
+   ============================================ */
+
+@media screen and (max-width: 767px) {
+  .pagination {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .page-item {
+    margin: 5px 2px;
+  }
+
+  .page-link {
+    padding: 8px 12px !important;
+    font-size: 14px !important;
+  }
+}
+
+/* ============================================
+   UTILITIES RESPONSIVE
+   ============================================ */
+
+@media screen and (max-width: 767px) {
+  /* Spacing adjustments */
+  .py-5 {
+    padding-top: 2rem !important;
+    padding-bottom: 2rem !important;
+  }
+
+  .py-4 {
+    padding-top: 1.5rem !important;
+    padding-bottom: 1.5rem !important;
+  }
+
+  .mb-5 {
+    margin-bottom: 2rem !important;
+  }
+
+  .mb-4 {
+    margin-bottom: 1.5rem !important;
+  }
+
+  /* Hide on mobile */
+  .d-none-mobile {
+    display: none !important;
+  }
+
+  /* Show only on mobile */
+  .d-mobile-only {
+    display: block !important;
+  }
+
+  /* Text alignment */
+  .text-center-mobile {
+    text-align: center !important;
+  }
+}
+
+/* ============================================
+   FLOATING BUTTONS RESPONSIVE (Zalo, Facebook, Scroll to Top)
+   ============================================ */
+
+@media screen and (max-width: 767px) {
+  .floating-buttons-container {
+    bottom: 20px !important;
+    right: 20px !important;
+    gap: 10px !important;
+  }
+
+  .social-button,
+  .scroll-to-top-btn {
+    width: 45px !important;
+    height: 45px !important;
+  }
+
+  .social-button svg,
+  .scroll-to-top-btn svg {
+    width: 20px !important;
+    height: 20px !important;
+  }
+}
+
+/* ============================================
+   OFF CANVAS RESPONSIVE
+   ============================================ */
+
+@media screen and (max-width: 767px) {
+  .offcanvas {
+    width: 85% !important;
+    max-width: 320px !important;
+  }
+
+  .offcanvas-header {
+    padding: 15px !important;
+    border-bottom: 1px solid #e9ecef;
+  }
+
+  .offcanvas-title {
+    font-size: 1.25rem !important;
+    font-weight: 700;
+    color: #212529;
+  }
+
+  .offcanvas-body {
+    padding: 15px !important;
+  }
+
+  /* Offcanvas Search */
+  #offcanvasSearch .form-control {
+    font-size: 16px !important; /* Prevent zoom on iOS */
+  }
+
+  #offcanvasSearch .btn {
+    min-width: 50px;
+  }
+
+  /* Offcanvas Cart */
+  #offcanvasCart .list-group-item {
+    padding: 12px !important;
+  }
+
+  #offcanvasCart .list-group-item img {
+    width: 60px !important;
+    height: 60px !important;
+  }
+
+  #offcanvasCart .list-group-item h6 {
+    font-size: 0.9rem !important;
+    margin-bottom: 4px !important;
+  }
+
+  #offcanvasCart .list-group-item small {
+    font-size: 0.8rem !important;
+  }
+
+  #offcanvasCart .btn-lg {
+    font-size: 1rem !important;
+    padding: 12px !important;
+  }
+
+  /* Empty cart message */
+  #offcanvasCart .text-center svg {
+    opacity: 0.3;
+  }
+}
+
+/* ============================================
+   TOAST NOTIFICATION RESPONSIVE
+   ============================================ */
+
+@media screen and (max-width: 767px) {
+  .toast-notification {
+    right: 10px !important;
+    left: 10px !important;
+    top: 10px !important;
+    padding: 12px 16px !important;
+    max-width: calc(100% - 20px);
+  }
+
+  .toast-content {
+    font-size: 13px !important;
+  }
+}
+
+/* ============================================
+   IPHONE SPECIFIC FIXES
+   ============================================ */
+
+/* Fix for iOS Safari input zoom */
+@supports (-webkit-touch-callout: none) {
+  @media screen and (max-width: 767px) {
+    input[type="text"],
+    input[type="email"],
+    input[type="number"],
+    input[type="tel"],
+    input[type="password"],
+    select,
+    textarea {
+      font-size: 16px !important; /* Prevents zoom on focus */
+    }
+  }
+}
+
+/* Fix for iOS Safari safe area */
+@supports (padding: max(0px)) {
+  @media screen and (max-width: 767px) {
+    body {
+      padding-left: env(safe-area-inset-left);
+      padding-right: env(safe-area-inset-right);
+    }
+
+    .site-header {
+      padding-left: env(safe-area-inset-left);
+      padding-right: env(safe-area-inset-right);
+    }
+  }
+}
+
+/* Fix for iOS Safari 100vh issue */
+@supports (-webkit-touch-callout: none) {
+  @media screen and (max-width: 767px) {
+    .min-vh-100 {
+      min-height: -webkit-fill-available;
+    }
+  }
+}
+
+/* ============================================
+   LANDSCAPE ORIENTATION FIXES
+   ============================================ */
+
+@media screen and (max-width: 767px) and (orientation: landscape) {
+  .banner-ad .swiper-slide {
+    min-height: 300px !important;
+  }
+
+  .product-image-wrapper {
+    height: 250px !important;
+  }
+}
+
+/* ============================================
+   TABLET RESPONSIVE (iPad)
+   ============================================ */
+
+@media screen and (min-width: 768px) and (max-width: 1023px) {
+  .banner-ad .banner-content .categories {
+    font-size: 30px !important;
+  }
+
+  .banner-ad .banner-content .banner-title {
+    font-size: 28px !important;
+  }
+
+  .banner-ad.large .banner-content .banner-title {
+    font-size: 42px !important;
+  }
+
+  .product-image-wrapper {
+    height: 240px !important;
+  }
+
+  .product-title {
+    font-size: 15px !important;
+  }
+
+  .cart-item-content {
+    grid-template-columns: 120px 1fr auto auto auto auto !important;
+  }
+}
+
+/* ============================================
+   DISCOUNT FORM SECTION RESPONSIVE
+   ============================================ */
+
+@media screen and (max-width: 767px) {
+  .bg-secondary.py-5 {
+    padding: 30px 15px !important;
+  }
+
+  .bg-secondary .container {
+    padding: 0 !important;
+  }
+
+  .bg-secondary .row .col-md-4 {
+    margin-bottom: 30px;
+    padding: 20px !important;
+  }
+
+  .bg-secondary .section-title {
+    font-size: 1.5rem !important;
+  }
+
+  .bg-secondary .section-title .display-4 {
+    font-size: 1.5rem !important;
+  }
+
+  .bg-secondary p {
+    font-size: 14px;
+  }
+
+  .bg-secondary .form-control-lg {
+    font-size: 14px !important;
+    padding: 10px 12px !important;
+  }
+
+  .bg-secondary .map-container {
+    margin-bottom: 15px;
+  }
+
+  .bg-secondary .map-container iframe {
+    height: 200px !important;
+  }
+
+  .bg-secondary .location-info p {
+    font-size: 13px;
+    margin-bottom: 8px;
+  }
+}
+
+/* ============================================
+   SECTION HEADER RESPONSIVE
+   ============================================ */
+
+@media screen and (max-width: 767px) {
+  .section-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    margin-bottom: 20px !important;
+  }
+
+  .section-header .section-title {
+    margin-bottom: 15px !important;
+  }
+
+  .section-header .btn {
+    width: 100%;
+    margin-top: 10px;
+  }
+}
+
+/* ============================================
+   PRODUCT GRID RESPONSIVE
+   ============================================ */
+
+@media screen and (max-width: 767px) {
+  .row.g-4 .col-6 {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .row.g-4 .col-md-3 {
+    margin-bottom: 15px;
+  }
+
+  .row.g-4 .col-sm-6 {
+    margin-bottom: 15px;
+  }
+}
+
+/* ============================================
+   SPINNER AND LOADING RESPONSIVE
+   ============================================ */
+
+@media screen and (max-width: 767px) {
+  .spinner-border {
+    width: 2rem !important;
+    height: 2rem !important;
+  }
+
+  .spinner-border-sm {
+    width: 1rem !important;
+    height: 1rem !important;
+  }
+}
+
+/* ============================================
+   ALERT RESPONSIVE
+   ============================================ */
+
+@media screen and (max-width: 767px) {
+  .alert {
+    font-size: 14px;
+    padding: 12px 15px !important;
+  }
+
+  .alert h4,
+  .alert h5 {
+    font-size: 1.1rem !important;
+    margin-bottom: 10px !important;
+  }
+}
+
+/* ============================================
+   BREADCRUMB RESPONSIVE
+   ============================================ */
+
+@media screen and (max-width: 767px) {
+  .breadcrumb {
+    font-size: 13px;
+    flex-wrap: wrap;
+  }
+
+  .breadcrumb-item {
+    padding: 0.25rem 0.5rem;
+  }
+
+  .breadcrumb-item + .breadcrumb-item::before {
+    padding-right: 0.5rem;
+  }
+}
+
+/* ============================================
+   BADGE RESPONSIVE
+   ============================================ */
+
+@media screen and (max-width: 767px) {
+  .badge {
+    font-size: 0.7rem !important;
+    padding: 0.35em 0.65em !important;
+  }
+
+  .badge.rounded-pill {
+    font-size: 0.65rem !important;
+  }
+}
+
+/* ============================================
+   CARD RESPONSIVE
+   ============================================ */
+
+@media screen and (max-width: 767px) {
+  .card {
+    margin-bottom: 20px;
+  }
+
+  .card-body {
+    padding: 15px !important;
+  }
+
+  .card-header {
+    padding: 12px 15px !important;
+  }
+
+  .card-title {
+    font-size: 1.1rem !important;
+  }
+
+  .card-text {
+    font-size: 14px;
+  }
+}
+
+/* ============================================
+   NAVBAR RESPONSIVE (if used)
+   ============================================ */
+
+@media screen and (max-width: 767px) {
+  .navbar {
+    padding: 10px 0 !important;
+  }
+
+  .navbar-brand {
+    font-size: 1.2rem !important;
+  }
+
+  .navbar-nav {
+    text-align: center;
+  }
+
+  .navbar-nav .nav-link {
+    padding: 10px 15px;
+    font-size: 14px;
+  }
+}
+
+/* ============================================
+   MODAL RESPONSIVE
+   ============================================ */
+
+@media screen and (max-width: 767px) {
+  .modal-dialog {
+    margin: 10px;
+    max-width: calc(100% - 20px);
+  }
+
+  .modal-content {
+    border-radius: 12px;
+  }
+
+  .modal-header {
+    padding: 15px !important;
+  }
+
+  .modal-body {
+    padding: 15px !important;
+  }
+
+  .modal-footer {
+    padding: 15px !important;
+    flex-direction: column;
+  }
+
+  .modal-footer .btn {
+    width: 100%;
+    margin: 5px 0;
+  }
+}
+
+/* ============================================
+   LIST GROUP RESPONSIVE
+   ============================================ */
+
+@media screen and (max-width: 767px) {
+  .list-group-item {
+    padding: 12px 15px !important;
+    font-size: 14px;
+  }
+
+  .list-group-item h6 {
+    font-size: 0.95rem !important;
+  }
+
+  .list-group-item small {
+    font-size: 0.8rem !important;
+  }
+}
+
+/* ============================================
+   DROPDOWN RESPONSIVE
+   ============================================ */
+
+@media screen and (max-width: 767px) {
+  .dropdown-menu {
+    font-size: 14px;
+    min-width: 200px;
+    max-width: calc(100vw - 40px);
+  }
+
+  .dropdown-item {
+    padding: 10px 15px;
+    font-size: 14px;
+  }
+}
+
+/* ============================================
+   UTILITY CLASSES FOR MOBILE
+   ============================================ */
+
+@media screen and (max-width: 767px) {
+  /* Full width on mobile */
+  .w-mobile-100 {
+    width: 100% !important;
+  }
+
+  /* No margin on mobile */
+  .m-mobile-0 {
+    margin: 0 !important;
+  }
+
+  /* Small padding on mobile */
+  .p-mobile-2 {
+    padding: 0.5rem !important;
+  }
+
+  /* Center text on mobile */
+  .text-mobile-center {
+    text-align: center !important;
+  }
+
+  /* Stack flex items on mobile */
+  .flex-mobile-column {
+    flex-direction: column !important;
+  }
+}
+
+/* ============================================
+   END OF MOBILE RESPONSIVE CSS
+   ============================================ */
+

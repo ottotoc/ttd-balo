@@ -6,6 +6,7 @@ import HomePage from './pages/HomePage.jsx'
 import ProductDetail from './pages/ProductDetail.jsx'
 import CartPage from './pages/CartPage.jsx'
 import ProductsPage from './pages/ProductsPage.jsx'
+import AboutPage from './pages/AboutPage.jsx'
 
 // Global styles
 import 'bootstrap/dist/css/bootstrap.min.css'
@@ -29,6 +30,7 @@ if (container) {
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/product/:slug" element={<ProductDetail />} />
           <Route path="/cart" element={<CartPage />} />
+          <Route path="/about" element={<AboutPage />} />
           {/* Add more routes as needed */}
         </Routes>
       </BrowserRouter>
