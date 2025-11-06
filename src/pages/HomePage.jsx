@@ -5,7 +5,6 @@ import OffcanvasSearch from '../components/layout/OffcanvasSearch.jsx'
 import Header from '../components/layout/Header.jsx'
 import Footer from '../components/layout/Footer.jsx'
 import HeroBanner from '../components/sections/HeroBanner.jsx'
-import TwoBannerAds from '../components/sections/TwoBannerAds.jsx'
 import BestSelling from '../components/sections/BestSelling.jsx'
 import SocialProofSection from '../components/sections/SocialProofSection.jsx'
 import DiscountForm from '../components/sections/DiscountForm.jsx'
@@ -18,6 +17,7 @@ import TikTokSection from '../components/sections/TikTokSection.jsx'
 import FAQSection from '../components/sections/FAQSection.jsx'
 import Benefits from '../components/sections/Benefits.jsx'
 import ScrollToTop from '../components/ui/ScrollToTop.jsx'
+import LiveActivityWidget from '../components/ui/LiveActivityWidget.jsx'
 
 export default function HomePage() {
   return (
@@ -27,7 +27,6 @@ export default function HomePage() {
       <OffcanvasSearch />
       <Header />
       <HeroBanner />
-      <TwoBannerAds />
       <BestSelling />
       <SocialProofSection />
       <DiscountForm />
@@ -41,6 +40,7 @@ export default function HomePage() {
       <Benefits />
       <Footer />
       <ScrollToTop />
+      <LiveActivityWidget />
     </>
   )
 }

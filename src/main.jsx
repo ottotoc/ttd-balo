@@ -7,6 +7,8 @@ import ProductDetail from './pages/ProductDetail.jsx'
 import CartPage from './pages/CartPage.jsx'
 import ProductsPage from './pages/ProductsPage.jsx'
 import AboutPage from './pages/AboutPage.jsx'
+import CheckoutPage from './pages/CheckoutPage.jsx'
+import OrderConfirmationPage from './pages/OrderConfirmationPage.jsx'
 
 // Global styles
 import 'bootstrap/dist/css/bootstrap.min.css'
@@ -30,6 +32,8 @@ if (container) {
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/product/:slug" element={<ProductDetail />} />
           <Route path="/cart" element={<CartPage />} />
+          <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/order-confirmation/:id" element={<OrderConfirmationPage />} />
           <Route path="/about" element={<AboutPage />} />
           {/* Add more routes as needed */}
         </Routes>

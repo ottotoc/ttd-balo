@@ -101,13 +101,17 @@ const createOrder = asyncHandler(async (req, res) => {
 
   // Create order
   const order = await prisma.$transaction(async (tx) => {
+    // For bank transfer, set status to AWAITING_CONFIRMATION (waiting for admin to confirm via phone call)
+    // For COD, set status to PENDING
+    const initialStatus = paymentMethod === 'BANK_TRANSFER' ? 'AWAITING_CONFIRMATION' : 'PENDING';
+    
     const newOrder = await tx.order.create({
       data: {
         userId: req.user ? Number(req.user.sub) : null,
-        status: 'PENDING',
+        status: initialStatus,
         paymentMethod,
         paymentStatus: 'PENDING',
-        bankRef: paymentMethod === 'BANK_TRANSFER' ? bankRef : null,
+        bankRef: paymentMethod === 'BANK_TRANSFER' ? bankRef || null : null,
         shippingAddress,
         shippingFee: shippingFeeNum,
         vatPercent,
@@ -203,8 +207,33 @@ const getOrder = asyncHandler(async (req, res) => {
     throw new NotFoundError('Order not found');
   }
 
-  // Regular users can only view their own orders
-  if (req.user.role !== 'ADMIN' && order.userId !== Number(req.user.sub)) {
+  // Admin can view any order
+  if (req.user && req.user.role === 'ADMIN') {
+    return success(res, order);
+  }
+
+  // Authenticated users can view their own orders
+  if (req.user && order.userId && order.userId === Number(req.user.sub)) {
+    return success(res, order);
+  }
+
+  // Allow viewing order confirmation page within 1 hour of order creation
+  // This enables guest users to view their order confirmation after checkout
+  const orderAge = Date.now() - new Date(order.createdAt).getTime();
+  const oneHour = 60 * 60 * 1000; // 1 hour in milliseconds
+  
+  if (orderAge <= oneHour) {
+    // Allow access to order confirmation page within 1 hour
+    return success(res, order);
+  }
+
+  // After 1 hour, require authentication
+  if (!req.user) {
+    throw new ForbiddenError('Authentication required to view this order');
+  }
+
+  // If order has userId but user is not the owner, deny access
+  if (order.userId && order.userId !== Number(req.user.sub)) {
     throw new ForbiddenError('Access denied');
   }
 
@@ -335,12 +364,13 @@ const confirmPayment = asyncHandler(async (req, res) => {
       }
     }
 
-    // Update order payment status
+    // Update order payment status and status
+    // When admin confirms payment (after phone call), order moves to PROCESSING
     await tx.order.update({
       where: { id: parseInt(id) },
       data: {
         paymentStatus: 'PAID',
-        status: 'AWAITING_CONFIRMATION',
+        status: 'PROCESSING',
       },
     });
   });

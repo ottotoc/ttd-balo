@@ -282,6 +282,111 @@ h1,h2,h3,h4,h5,h6 {
 .container, .container-fluid, .container-lg, .container-md, .container-sm, .container-xl, .container-xxl {
   --bs-gutter-x: 3rem;
 }
+
+/* Sections - White background layer */
+section {
+  background-color: white;
+  position: relative;
+}
+
+/* Section Header - Orange background with white text */
+.section-header {
+  background-color: #ff6600;
+  color: white;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.section-header .section-title {
+  color: white;
+  margin: 0;
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+
+.section-header .btn,
+.section-header .btn-link,
+.section-header a {
+  color: white;
+  border-color: white;
+  background-color: transparent;
+}
+
+.section-header .btn:hover,
+.section-header .btn-link:hover,
+.section-header a:hover {
+  color: #ff6600;
+  background-color: white;
+  border-color: white;
+}
+
+.section-header .btn-outline-secondary {
+  color: white;
+  border-color: rgba(255, 255, 255, 0.5);
+  background-color: transparent;
+}
+
+.section-header .btn-outline-secondary:hover {
+  color: #ff6600;
+  background-color: white;
+  border-color: white;
+}
+
+.section-header .btn-outline-primary {
+  color: white;
+  border-color: white;
+  background-color: transparent;
+}
+
+.section-header .btn-outline-primary:hover {
+  color: #ff6600;
+  background-color: white;
+  border-color: white;
+}
+
+.section-header .btn-primary {
+  color: white;
+  border-color: white;
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.section-header .btn-primary:hover {
+  color: #ff6600;
+  background-color: white;
+  border-color: white;
+}
+
+.section-header .carousel-nav button {
+  color: white;
+  border-color: rgba(255, 255, 255, 0.5);
+  background-color: transparent;
+}
+
+.section-header .carousel-nav button:hover {
+  color: #ff6600;
+  background-color: white;
+  border-color: white;
+}
+
+.section-header .nav-link {
+  color: white;
+}
+
+.section-header .nav-link:hover {
+  color: white;
+  opacity: 0.8;
+}
+
+.section-header .nav-link svg {
+  fill: white;
+}
+
 /*----------------------------------------------*/
 /* 6. SITE STRUCTURE */
 /*----------------------------------------------*/
@@ -291,7 +396,7 @@ h1,h2,h3,h4,h5,h6 {
 .site-header {
   position: sticky;
   top: 0;
-  z-index: 1000;
+  z-index: 1100;
   background: #fff;
 }
 /* Preloader */
@@ -1117,31 +1222,36 @@ h1,h2,h3,h4,h5,h6 {
   }
   
   .product-title {
-    font-size: 14px;
-    min-height: 40px;
+    font-size: 15px;
+    min-height: auto;
   }
   
   .product-price {
-    font-size: 18px;
+    font-size: 20px;
   }
   
   .btn-add-to-cart {
-    padding: 12px 16px;
-    font-size: 13px;
+    padding: 14px 16px;
+    font-size: 14px;
   }
   
   .product-overlay {
     display: none; /* Hide overlay on mobile for better performance */
   }
+
+  .product-price-section {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
 }
 
 @media screen and (max-width: 576px) {
   .product-image-wrapper {
-    height: 180px;
+    height: 200px;
   }
   
   .product-info {
-    padding: 12px;
+    padding: 14px;
   }
   
   .product-description {
@@ -1907,7 +2017,7 @@ h1,h2,h3,h4,h5,h6 {
   padding: 1px 0;
   overflow: hidden;
   position: relative;
-  z-index: 999;
+  z-index: 1100;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 

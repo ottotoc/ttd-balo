@@ -8,7 +8,8 @@ router.post('/', optionalAuth, ordersController.createOrder);
 
 // Get orders (authenticated)
 router.get('/', authenticate, ordersController.getOrders);
-router.get('/:id', authenticate, ordersController.getOrder);
+// Get single order (public for confirmation page, but requires auth for other access)
+router.get('/:id', optionalAuth, ordersController.getOrder);
 
 // Admin routes
 router.patch('/:id/status', authenticate, authorize('ADMIN'), ordersController.updateOrderStatus);

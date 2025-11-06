@@ -6,7 +6,7 @@ import Section from '../layout/Section.jsx'
 const testimonials = [
   {
     id: 1,
-    name: 'Nguyễn Văn A',
+    name: 'Hoàng Thiên Nhân',
     role: 'Sinh viên',
     avatar: '/images/reviewer-1.jpg',
     rating: 5,
@@ -15,7 +15,7 @@ const testimonials = [
   },
   {
     id: 2,
-    name: 'Trần Thị B',
+    name: 'Trần Toàn Thắng',
     role: 'Nhân viên văn phòng',
     avatar: '/images/reviewer-2.jpg',
     rating: 5,
@@ -24,22 +24,14 @@ const testimonials = [
   },
   {
     id: 3,
-    name: 'Lê Minh C',
+    name: 'Lê Trúc Anh',
     role: 'Doanh nhân',
     avatar: '/images/reviewer-3.jpg',
     rating: 5,
     comment: 'Vali du lịch rất bền, bánh xe êm ái. Đã dùng qua 5 chuyến bay vẫn như mới. Rất đáng đồng tiền bát gạo!',
     date: '3 tuần trước'
   },
-  {
-    id: 4,
-    name: 'Phạm Thu D',
-    role: 'Giáo viên',
-    avatar: '/images/reviewer-1.jpg',
-    rating: 5,
-    comment: 'Balo học sinh cho con rất đẹp, chống nước tốt. Con rất thích và tự hào khi đi học. Cảm ơn shop!',
-    date: '1 tuần trước'
-  }
+  
 ]
 
 export default function TestimonialsSection() {
@@ -74,8 +66,7 @@ export default function TestimonialsSection() {
                     {[...Array(5)].map((_, index) => (
                       <span
                         key={index}
-                        className={index < testimonial.rating ? 'text-warning' : 'text-muted'}
-                        style={{ fontSize: '1.2rem' }}
+                        style={{ fontSize: '1.2rem', color: index < testimonial.rating ? 'yellow' : '#adb5bd' }}
                       >
                         ★
                       </span>
