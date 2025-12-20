@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useProducts } from '../hooks/useProducts'
 import { catalog } from '../lib/api'
+import { getImageUrl } from '../lib/imageUtils'
 import IconsSprite from '../components/layout/IconsSprite.jsx'
 import OffcanvasCart from '../components/layout/OffcanvasCart.jsx'
 import OffcanvasSearch from '../components/layout/OffcanvasSearch.jsx'
@@ -251,10 +252,13 @@ export default function ProductsPage() {
                       <div className="position-relative">
                         {product.images && product.images.length > 0 ? (
                           <img
-                            src={product.images[0].url}
+                            src={getImageUrl(product.images[0].url)}
                             alt={product.name}
                             className="card-img-top"
                             style={{ height: '200px', objectFit: 'cover' }}
+                            onError={(e) => {
+                              e.target.src = '/images/product-thumb-1.png';
+                            }}
                           />
                         ) : (
                           <div 

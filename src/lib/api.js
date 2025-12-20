@@ -330,14 +330,70 @@ export const admin = {
 
 // ========== UPLOADS ==========
 export const uploads = {
+  // Upload file trực tiếp (FormData)
+  // category: 'projects' | 'blog' | 'general' (default: 'general')
+  uploadFile: (file, category = 'general') => {
+    const formData = new FormData();
+    formData.append('image', file);
+    formData.append('category', category);
+    
+    // Gửi category qua query param để multer có thể đọc trước khi parse formData
+    const queryParam = category && category !== 'general' ? `?category=${category}` : '';
+    
+    return fetch(`${API_URL}/api/uploads/file${queryParam}`, {
+      method: 'POST',
+      credentials: 'include',
+      body: formData,
+    }).then(async (response) => {
+      if (response.status === 204) {
+        return { success: true };
+      }
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error?.message || 'Upload failed');
+      }
+      return data;
+    });
+  },
+  
+  // Upload multiple files
+  // category: 'projects' | 'blog' | 'general' (default: 'general')
+  uploadFiles: (files, category = 'general') => {
+    const formData = new FormData();
+    files.forEach((file) => {
+      formData.append('images', file);
+    });
+    formData.append('category', category);
+    
+    // Gửi category qua query param
+    const queryParam = category && category !== 'general' ? `?category=${category}` : '';
+    
+    return fetch(`${API_URL}/api/uploads/files${queryParam}`, {
+      method: 'POST',
+      credentials: 'include',
+      body: formData,
+    }).then(async (response) => {
+      if (response.status === 204) {
+        return { success: true };
+      }
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error?.message || 'Upload failed');
+      }
+      return data;
+    });
+  },
+  
+  // Delete file
+  deleteFile: (filename) => apiCall('/api/uploads/file', {
+    method: 'DELETE',
+    body: JSON.stringify({ filename }),
+  }),
+  
+  // Legacy GCS methods (deprecated, kept for backward compatibility)
   getSignedUrl: (filename, contentType) => apiCall('/api/uploads/signed-url', {
     method: 'POST',
     body: JSON.stringify({ filename, contentType }),
-  }),
-  
-  deleteFile: (objectName) => apiCall('/api/uploads/file', {
-    method: 'DELETE',
-    body: JSON.stringify({ objectName }),
   }),
 };
 

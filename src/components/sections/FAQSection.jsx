@@ -122,7 +122,7 @@ export default function FAQSection() {
           </div>
         </div>
 
-        <style jsx>{`
+        <style>{`
           .accordion-button:not(.collapsed) {
             box-shadow: none;
           }

@@ -22,7 +22,7 @@ export default function HeroBanner() {
                         <a href="#" className="btn btn-outline-dark btn-lg text-uppercase fs-6 rounded-1 px-4 py-3 mt-3">Xem ngay</a>
                       </div>
                       <div className="img-wrapper col-md-5">
-                        <img src="" className="img-fluid" />
+                        <img src="/images/product-thumb-1.png" alt="Balo đa năng" className="img-fluid" />
                       </div>
                     </div>
                   </SwiperSlide>
@@ -35,7 +35,7 @@ export default function HeroBanner() {
                         <a href="#" className="btn btn-outline-dark btn-lg text-uppercase fs-6 rounded-1">Xem ngay</a>
                       </div>
                       <div className="img-wrapper col-md-5">
-                        <img src="" className="img-fluid" />
+                        <img src="/images/product-thumb-1.png" alt="Balo học sinh" className="img-fluid" />
                       </div>
                     </div>
                   </SwiperSlide>
@@ -48,7 +48,7 @@ export default function HeroBanner() {
                         <a href="#" className="btn btn-outline-dark btn-lg text-uppercase fs-6 rounded-1">Xem ngay</a>
                       </div>
                       <div className="img-wrapper col-md-5">
-                        <img src="" className="img-fluid" />
+                        <img src="/images/product-thumb-1.png" alt="Balo du lịch" className="img-fluid" />
                       </div>
                     </div>
                   </SwiperSlide>

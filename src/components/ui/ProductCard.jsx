@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useCart } from '../../contexts/CartContext'
+import { getImageUrl } from '../../lib/imageUtils'
 
 export default function ProductCard({ product, showBadge = false, badgeText = '' }) {
   const { addItem } = useCart()
@@ -9,7 +10,7 @@ export default function ProductCard({ product, showBadge = false, badgeText = ''
   
   // Get primary image or first image
   const primaryImage = product.images?.find(img => img.isPrimary) || product.images?.[0]
-  const imageUrl = primaryImage?.url || '/images/product-thumb-1.png'
+  const imageUrl = getImageUrl(primaryImage?.url) || '/images/product-thumb-1.png'
   
   // Calculate sale price and discount
   const hasSalePrice = product.salePrice && product.salePrice > 0 && product.salePrice < product.price

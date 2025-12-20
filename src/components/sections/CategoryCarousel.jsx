@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react'
 import Section from '../layout/Section.jsx'
 import { useCategories } from '../../hooks/useCategories'
+import { getImageUrl } from '../../lib/imageUtils'
 
 export default function CategoryCarousel() {
   const { categories, loading, error } = useCategories()
@@ -142,10 +143,13 @@ export default function CategoryCarousel() {
                 <div className="card-body d-flex flex-column align-items-center justify-content-center p-3">
                   {category.imageUrl ? (
                     <img
-                      src={category.imageUrl}
+                      src={getImageUrl(category.imageUrl)}
                       alt={category.name}
                       className="img-fluid mb-2 brand-image"
                       style={{ maxHeight: '60px', objectFit: 'contain' }}
+                      onError={(e) => {
+                        e.target.src = '/images/icon-vegetables-broccoli.png';
+                      }}
                     />
                   ) : (
                     <div

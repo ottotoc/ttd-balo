@@ -371,6 +371,7 @@ export default function ProductsPage() {
                     onChange={(url) => setForm(prev => ({ ...prev, imageUrl: url }))}
                     label="Ảnh sản phẩm"
                     required={true}
+                    category="projects"
                   />
                 </div>
                 

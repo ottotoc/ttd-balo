@@ -1,7 +1,8 @@
 import React from 'react'
+import { getImageUrl } from '../../lib/imageUtils'
 
 export default function CategoryCard({ category }) {
-  const imageUrl = category.imageUrl || '/images/icon-vegetables-broccoli.png'
+  const imageUrl = getImageUrl(category.imageUrl) || '/images/icon-vegetables-broccoli.png'
   
   return (
     <a href={`/products?category=${category.slug}`} className="text-decoration-none">
@@ -12,6 +13,9 @@ export default function CategoryCard({ category }) {
             className="img-fluid" 
             alt={category.name} 
             style={{ maxHeight: 120, objectFit: 'contain' }} 
+            onError={(e) => {
+              e.target.src = '/images/icon-vegetables-broccoli.png';
+            }}
           />
         </div>
         <div className="card-body pt-0">

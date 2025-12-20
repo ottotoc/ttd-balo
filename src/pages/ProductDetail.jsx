@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useProduct } from '../hooks/useProduct'
 import { useCart } from '../contexts/CartContext'
+import { getImageUrl } from '../lib/imageUtils'
 import Header from '../components/layout/Header'
 import Footer from '../components/layout/Footer'
 import OffcanvasCart from '../components/layout/OffcanvasCart'
@@ -82,7 +83,7 @@ export default function ProductDetail() {
   }
 
   const primaryImage = product.images?.find(img => img.isPrimary) || product.images?.[0]
-  const imageUrl = primaryImage?.url || '/images/product-thumb-1.png'
+  const imageUrl = getImageUrl(primaryImage?.url) || '/images/product-thumb-1.png'
   
   // Calculate sale price and discount
   const hasSalePrice = product.salePrice && product.salePrice > 0 && product.salePrice < product.price
@@ -124,10 +125,13 @@ export default function ProductDetail() {
                 {/* Main Image */}
                 <div className="main-image mb-3">
                   <img 
-                    src={product.images?.[selectedImage]?.url || imageUrl} 
+                    src={getImageUrl(product.images?.[selectedImage]?.url) || imageUrl} 
                     alt={product.name}
                     className="img-fluid rounded"
                     style={{ width: '100%', objectFit: 'cover', maxHeight: '600px' }}
+                    onError={(e) => {
+                      e.target.src = '/images/product-thumb-1.png';
+                    }}
                   />
                   {hasSalePrice && (
                     <div className="badge-discount">-{discountPercent}%</div>
@@ -145,10 +149,13 @@ export default function ProductDetail() {
                         style={{ cursor: 'pointer' }}
                       >
                         <img 
-                          src={img.url} 
+                          src={getImageUrl(img.url)} 
                           alt={`${product.name} ${index + 1}`}
                           className="img-fluid rounded"
                           style={{ width: '100px', height: '100px', objectFit: 'cover' }}
+                          onError={(e) => {
+                            e.target.src = '/images/product-thumb-1.png';
+                          }}
                         />
                       </div>
                     ))}

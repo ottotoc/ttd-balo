@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { admin } from '../../lib/api'
 import { slugify } from '../../lib/slugify'
+import { getImageUrl } from '../../lib/imageUtils'
 
 export default function BrandsPage() {
   const [brands, setBrands] = useState([])
@@ -125,7 +126,7 @@ export default function BrandsPage() {
                   <td>{brand.slug}</td>
                   <td>
                     {brand.imageUrl ? (
-                      <img src={brand.imageUrl} alt={brand.name} style={{ width: 40, height: 40, objectFit: 'cover', borderRadius: 4 }} />
+                      <img src={getImageUrl(brand.imageUrl, 'dashboard')} alt={brand.name} style={{ width: 40, height: 40, objectFit: 'cover', borderRadius: 4 }} />
                     ) : (
                       <span className="text-muted small">—</span>
                     )}

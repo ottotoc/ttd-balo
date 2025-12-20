@@ -103,7 +103,7 @@ export default function TestimonialsSection() {
           ))}
         </Swiper>
 
-        <style jsx>{`
+        <style>{`
           .hover-lift {
             transition: all 0.3s ease;
           }

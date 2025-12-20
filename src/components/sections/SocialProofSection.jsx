@@ -172,7 +172,7 @@ export default function SocialProofSection() {
           </div>
         </div>
 
-        <style jsx>{`
+        <style>{`
           .hover-stat {
             transition: all 0.3s ease;
             cursor: pointer;

@@ -2,15 +2,16 @@ import React, { useState, useEffect } from 'react'
 import { uploads } from '../../lib/api'
 
 /**
- * ImageUpload Component - Upload ảnh lên Google Cloud Storage
+ * ImageUpload Component - Upload ảnh lên server local
  * 
  * Props:
  * - value: URL ảnh hiện tại (string)
  * - onChange: Callback khi upload thành công (url) => void
  * - label: Label của input (default: 'Image')
  * - required: Bắt buộc hay không (default: false)
+ * - category: Category của ảnh - 'projects' | 'blog' | 'general' (default: 'general')
  */
-export default function ImageUpload({ value, onChange, label = 'Image', required = false }) {
+export default function ImageUpload({ value, onChange, label = 'Image', required = false, category = 'general' }) {
   const [uploading, setUploading] = useState(false)
   const [preview, setPreview] = useState(value || '')
   const [error, setError] = useState('')
@@ -31,9 +32,9 @@ export default function ImageUpload({ value, onChange, label = 'Image', required
       return
     }
 
-    // Validate file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      setError('Kích thước file không được vượt quá 5MB')
+    // Validate file size (max 30MB - sẽ được resize và optimize bởi backend)
+    if (file.size > 30 * 1024 * 1024) {
+      setError('Kích thước file không được vượt quá 30MB')
       return
     }
 
@@ -41,40 +42,54 @@ export default function ImageUpload({ value, onChange, label = 'Image', required
       setUploading(true)
       setError('')
 
-      // Step 1: Get signed URL from backend
-      console.log('📤 Requesting signed URL...')
-      const result = await uploads.getSignedUrl(file.name, file.type)
-      const { uploadUrl, publicUrl } = result.data
+      console.log('📤 Uploading file to server...', { category })
 
-      console.log('✅ Got signed URL, uploading to GCS...')
-
-      // Step 2: Upload file to GCS using signed URL
-      const uploadResponse = await fetch(uploadUrl, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': file.type,
-        },
-        body: file,
-      })
-
-      if (!uploadResponse.ok) {
-        throw new Error('Upload to GCS failed')
+      // Upload file trực tiếp lên server với category
+      const result = await uploads.uploadFile(file, category)
+      
+      // result.data chứa thông tin file đã upload
+      // Backend trả về: { success: true, data: { url, webUrl, dashboardUrl, thumbnail, ... } }
+      const responseData = result.data || result
+      
+      // Ưu tiên dùng webUrl cho database (cho frontend), fallback về url
+      const webUrl = responseData.webUrl || responseData.url
+      const dashboardUrl = responseData.dashboardUrl || responseData.url
+      
+      if (!webUrl) {
+        throw new Error('Server did not return image URL')
       }
 
-      console.log('✅ Upload successful!')
+      console.log('✅ Upload successful!', webUrl)
+      console.log('📊 Available versions:', {
+        web: responseData.webUrl,
+        dashboard: responseData.dashboardUrl,
+        thumbnail: responseData.thumbnail,
+        original: responseData.url
+      })
 
-      // Step 3: Update preview and notify parent
-      setPreview(publicUrl)
-      onChange(publicUrl)
+      // Update preview: dùng dashboardUrl cho admin panel (nhẹ hơn)
+      const previewUrl = dashboardUrl
+      const fullUrl = previewUrl.startsWith('http') 
+        ? previewUrl 
+        : `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}${previewUrl}`
+      
+      setPreview(fullUrl)
+      
+      // Lưu webUrl vào database (version đầy đủ cho frontend)
+      // Đảm bảo URL có format /uploads/... để getImageUrl xử lý đúng
+      const urlToSave = webUrl.startsWith('/uploads/') ? webUrl : `/uploads/${webUrl}`
+      onChange(urlToSave)
       
     } catch (err) {
       console.error('❌ Upload error:', err)
       
       // Xử lý các loại lỗi khác nhau
-      if (err.message === 'Failed to fetch') {
+      if (err.message === 'Failed to fetch' || err.message.includes('NetworkError')) {
         setError('Không thể kết nối với server. Vui lòng kiểm tra:\n1. Backend có đang chạy?\n2. Đã login admin chưa?\n3. Thử refresh trang và login lại')
-      } else if (err.message.includes('not configured')) {
-        setError('Google Cloud Storage chưa được cấu hình. Xem file GCS_SETUP.md để biết cách setup.')
+      } else if (err.message.includes('401') || err.message.includes('Unauthorized')) {
+        setError('Bạn chưa đăng nhập hoặc session đã hết hạn. Vui lòng đăng nhập lại.')
+      } else if (err.message.includes('403') || err.message.includes('Forbidden')) {
+        setError('Bạn không có quyền upload file. Chỉ admin mới có thể upload.')
       } else {
         setError(err.message || 'Lỗi upload ảnh. Vui lòng thử lại.')
       }
@@ -89,6 +104,15 @@ export default function ImageUpload({ value, onChange, label = 'Image', required
     setError('')
   }
 
+  // Helper để hiển thị URL ảnh (convert relative path thành full URL nếu cần)
+  const getImageUrl = (url) => {
+    if (!url) return ''
+    if (url.startsWith('http')) return url
+    // Nếu là relative path, thêm API_URL prefix
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000'
+    return `${apiUrl}${url}`
+  }
+
   return (
     <div className="form-group">
       <label>
@@ -98,7 +122,7 @@ export default function ImageUpload({ value, onChange, label = 'Image', required
       {preview ? (
         <div className="image-upload-preview">
           <img 
-            src={preview} 
+            src={getImageUrl(preview)} 
             alt="Preview" 
             style={{ 
               maxWidth: '100%', 
@@ -110,6 +134,13 @@ export default function ImageUpload({ value, onChange, label = 'Image', required
               marginBottom: '12px',
               display: 'block'
             }} 
+            onError={(e) => {
+              // Nếu ảnh không load được, thử với full URL
+              const fullUrl = getImageUrl(preview)
+              if (e.target.src !== fullUrl) {
+                e.target.src = fullUrl
+              }
+            }}
           />
           <div className="d-flex gap-2">
             <label className="btn btn-sm btn-outline-primary" style={{ cursor: 'pointer' }}>
@@ -170,7 +201,7 @@ export default function ImageUpload({ value, onChange, label = 'Image', required
                   📷 Click để chọn ảnh
                 </div>
                 <small className="text-muted" style={{ display: 'block' }}>
-                  JPG, PNG, WEBP, GIF (max 5MB)
+                  JPG, PNG, WEBP, GIF (max 30MB - tự động resize và optimize)
                 </small>
               </div>
             )}
@@ -186,9 +217,8 @@ export default function ImageUpload({ value, onChange, label = 'Image', required
       )}
       
       <small className="form-text text-muted mt-2" style={{ display: 'block' }}>
-        💾 Ảnh sẽ được lưu trên Google Cloud Storage
+        💾 Ảnh sẽ được tự động resize và optimize, lưu trên server local
       </small>
     </div>
   )
 }
-
