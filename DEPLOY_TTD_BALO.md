@@ -462,12 +462,51 @@ chmod -R 755 backend/uploads/
 chown -R $USER:$USER backend/uploads/  # hoặc user chạy PM2
 ```
 
-**Lỗi ảnh không hiển thị:**
+**Lỗi ảnh không hiển thị (upload thành công nhưng không thấy ảnh):**
+
+Triệu chứng:
+- Upload thành công, có URL `/uploads/blog/xxx.webp`
+- Nhưng ảnh không hiển thị trên website (404 hoặc broken image)
+
+Nguyên nhân:
+1. Nginx chưa có `location /uploads/` trong config
+2. Permissions không đúng (nginx không đọc được)
+3. Đường dẫn alias trong nginx config sai
+
+Cách fix:
+
 ```bash
-# Kiểm tra nginx config
+# Cách 1: Dùng script tự động
+cd /var/www/ttd-balo/ttd-balo
+bash backend/scripts/fix-image-display.sh
+
+# Cách 2: Fix thủ công
+
+# 1. Kiểm tra file ảnh có tồn tại
+ls -la /var/www/ttd-balo/ttd-balo/backend/uploads/blog/
+
+# 2. Set permissions (nginx cần đọc được)
+chmod -R 755 /var/www/ttd-balo/ttd-balo/backend/uploads
+chown -R www-data:www-data /var/www/ttd-balo/ttd-balo/backend/uploads
+
+# 3. Kiểm tra nginx config có location /uploads/ chưa
+grep -A 5 "location /uploads/" /etc/nginx/sites-available/balotanthoidai.vn
+
+# 4. Nếu chưa có, thêm vào (trước location /):
+# location /uploads/ {
+#   alias /var/www/ttd-balo/ttd-balo/backend/uploads/;
+#   expires 30d;
+#   add_header Cache-Control "public, immutable";
+#   access_log off;
+# }
+
+# 5. Test và reload nginx
 nginx -t
-# Kiểm tra đường dẫn trong nginx config
-ls -la /var/www/ttd-balo/ttd-balo/backend/uploads/
+systemctl reload nginx
+
+# 6. Test ảnh trực tiếp
+curl -I https://balotanthoidai.vn/uploads/blog/[filename].webp
+# Phải trả về HTTP 200
 ```
 
 **PM2 không nhận env:**
