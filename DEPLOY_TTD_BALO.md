@@ -364,6 +364,95 @@ Mỗi ảnh upload sẽ tự động tạo 3 version:
 
 ### 13.3 Troubleshooting
 
+#### 🔴 Lỗi 502 Bad Gateway (Backend không chạy)
+
+**Triệu chứng:**
+- Browser console: `502 Bad Gateway` cho `/api/auth/me`, `/api/auth/login`
+- Error: `Unexpected token '<', "<html>..." is not valid JSON`
+- Frontend nhận HTML thay vì JSON
+
+**Nguyên nhân:**
+- Backend chưa chạy hoặc đã crash
+- PM2 không start được
+- Backend lỗi khi khởi động (thiếu dependencies, database connection, etc.)
+
+**Cách fix:**
+
+```bash
+# 1. Kiểm tra PM2 status
+pm2 status
+pm2 list
+
+# 2. Nếu không có process ttd-balo-api, start lại:
+cd /var/www/ttd-balo/ttd-balo/backend
+pm2 start src/app.js --name ttd-balo-api
+pm2 save
+
+# 3. Nếu có process nhưng errored/stopped:
+pm2 logs ttd-balo-api --lines 100  # Xem logs để tìm lỗi
+pm2 restart ttd-balo-api --update-env
+
+# 4. Kiểm tra backend có chạy trên port 3000:
+netstat -tlnp | grep 3000
+# hoặc
+ss -tlnp | grep 3000
+# hoặc
+curl http://localhost:3000/health
+
+# 5. Nếu backend không chạy, kiểm tra:
+cd /var/www/ttd-balo/ttd-balo/backend
+# - File .env có đúng không?
+cat .env
+# - Dependencies đã install chưa?
+npm ci
+# - Database connection OK?
+npx prisma migrate deploy
+# - Thử chạy trực tiếp để xem lỗi:
+node src/app.js
+```
+
+**Các lỗi thường gặp:**
+
+1. **Thiếu dependencies:**
+   ```bash
+   cd backend
+   npm ci
+   ```
+
+2. **Database connection failed:**
+   ```bash
+   # Kiểm tra MySQL đang chạy
+   systemctl status mysql
+   # Kiểm tra user và password trong .env
+   mysql -u ttd -p -e "SELECT 1"
+   ```
+
+3. **Port 3000 đã được dùng:**
+   ```bash
+   # Tìm process đang dùng port 3000
+   lsof -i :3000
+   # Kill process cũ
+   kill -9 <PID>
+   ```
+
+4. **PM2 không nhận .env:**
+   ```bash
+   # Xóa và tạo lại với env file
+   pm2 delete ttd-balo-api
+   cd /var/www/ttd-balo/ttd-balo/backend
+   pm2 start src/app.js --name ttd-balo-api --env production
+   pm2 save
+   ```
+
+5. **Nginx config sai:**
+   ```bash
+   # Kiểm tra nginx config
+   nginx -t
+   # Kiểm tra proxy_pass trong config
+   cat /etc/nginx/sites-available/balotanthoidai.vn | grep proxy_pass
+   # Phải là: proxy_pass http://127.0.0.1:3000;
+   ```
+
 **Lỗi upload ảnh:**
 ```bash
 # Kiểm tra permissions
