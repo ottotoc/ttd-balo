@@ -1,110 +1,140 @@
-const { Storage } = require('@google-cloud/storage');
-const { GCP_BUCKET, GCP_KEY_FILE } = require('../../config/env');
+const path = require('path');
+const fs = require('fs').promises;
 const asyncHandler = require('../../common/asyncHandler');
 const { success } = require('../../common/response');
 const { BadRequestError } = require('../../common/errors');
 
-let storage;
-let bucket;
-
-// Initialize GCS only if credentials are provided
-try {
-  if (GCP_KEY_FILE && GCP_BUCKET) {
-    storage = new Storage({ keyFilename: GCP_KEY_FILE });
-    bucket = storage.bucket(GCP_BUCKET);
+// Đảm bảo thư mục uploads tồn tại
+const uploadsDir = path.join(__dirname, '../../../uploads');
+const ensureUploadsDir = async () => {
+  try {
+    await fs.access(uploadsDir);
+  } catch {
+    await fs.mkdir(uploadsDir, { recursive: true });
   }
-} catch (error) {
-  console.warn('GCS not configured:', error.message);
-}
+};
 
-// Get signed URL for uploading
-const getUploadUrl = asyncHandler(async (req, res) => {
-  if (!storage || !bucket) {
-    throw new BadRequestError('File upload service not configured');
-  }
+// Khởi tạo thư mục khi module được load
+ensureUploadsDir().catch(console.error);
 
-  const { filename, contentType } = req.body;
-
-  if (!filename || !contentType) {
-    throw new BadRequestError('Filename and content type are required');
+// Upload file trực tiếp
+const uploadFile = asyncHandler(async (req, res) => {
+  if (!req.file) {
+    throw new BadRequestError('No file uploaded');
   }
 
-  // Validate content type
-  const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
-  if (!allowedTypes.includes(contentType)) {
-    throw new BadRequestError('Invalid content type. Only images are allowed.');
-  }
-
-  // Generate unique filename
-  const timestamp = Date.now();
-  const sanitizedFilename = filename.replace(/[^a-zA-Z0-9.-]/g, '_');
-  const objectName = `uploads/${timestamp}-${sanitizedFilename}`;
-
-  const file = bucket.file(objectName);
-
-  // Generate signed URL for upload (valid for 15 minutes)
-  const [uploadUrl] = await file.getSignedUrl({
-    version: 'v4',
-    action: 'write',
-    expires: Date.now() + 15 * 60 * 1000, // 15 minutes
-    contentType,
-  });
-
-  // Public URL (will be accessible after upload)
-  const publicUrl = `https://storage.googleapis.com/${GCP_BUCKET}/${objectName}`;
-
+  // Lấy category từ req (đã được set bởi multer storage)
+  const category = req.uploadCategory || 'general';
+  
+  // Tạo public URL với category
+  const publicUrl = `/uploads/${category}/${req.file.filename}`;
+  
   success(res, {
-    uploadUrl,
-    publicUrl,
-    objectName,
-  });
+    url: publicUrl,
+    filename: req.file.filename,
+    originalName: req.file.originalname,
+    size: req.file.size,
+    mimetype: req.file.mimetype || 'image/webp',
+    processed: req.file.processed || false,
+    category: category,
+    // Các version khác nhau
+    webUrl: req.file.webUrl || publicUrl, // Web version (1920px) - cho frontend
+    dashboardUrl: req.file.dashboardUrl || publicUrl, // Dashboard version (800px) - cho admin
+    thumbnail: req.file.thumbnail || null, // Thumbnail (300px)
+  }, 201);
 });
 
-// Get signed URL for reading (if bucket is private)
-const getReadUrl = asyncHandler(async (req, res) => {
-  if (!storage || !bucket) {
-    throw new BadRequestError('File service not configured');
+// Upload multiple files
+const uploadFiles = asyncHandler(async (req, res) => {
+  if (!req.files || req.files.length === 0) {
+    throw new BadRequestError('No files uploaded');
   }
 
-  const { objectName } = req.body;
+  // Lấy category từ req
+  const category = req.uploadCategory || 'general';
 
-  if (!objectName) {
-    throw new BadRequestError('Object name is required');
-  }
+  const files = req.files.map(file => ({
+    url: `/uploads/${category}/${file.filename}`,
+    filename: file.filename,
+    originalName: file.originalname,
+    size: file.size,
+    mimetype: file.mimetype || 'image/webp',
+    processed: file.processed || false,
+    category: category,
+    webUrl: file.webUrl || `/uploads/${category}/${file.filename}`, // Web version (1920px)
+    dashboardUrl: file.dashboardUrl || `/uploads/${category}/${file.filename}`, // Dashboard version (800px)
+    thumbnail: file.thumbnail || null, // Thumbnail (300px)
+  }));
 
-  const file = bucket.file(objectName);
-
-  // Generate signed URL for reading (valid for 1 hour)
-  const [readUrl] = await file.getSignedUrl({
-    version: 'v4',
-    action: 'read',
-    expires: Date.now() + 60 * 60 * 1000, // 1 hour
-  });
-
-  success(res, { readUrl });
+  success(res, { files }, 201);
 });
 
 // Delete file
 const deleteFile = asyncHandler(async (req, res) => {
-  if (!storage || !bucket) {
-    throw new BadRequestError('File service not configured');
+  const { filename } = req.body;
+
+  if (!filename) {
+    throw new BadRequestError('Filename is required');
   }
 
-  const { objectName } = req.body;
-
-  if (!objectName) {
-    throw new BadRequestError('Object name is required');
+  // Parse URL để lấy category và filename
+  // URL format: /uploads/{category}/{filename}
+  const urlParts = filename.replace(/^\/uploads\//, '').split('/');
+  const category = urlParts.length > 1 ? urlParts[0] : 'general';
+  const baseFilename = urlParts.length > 1 ? urlParts[1] : urlParts[0];
+  
+  // Đảm bảo category hợp lệ
+  const allowedCategories = ['projects', 'blog', 'general'];
+  const finalCategory = allowedCategories.includes(category) ? category : 'general';
+  
+  // Đường dẫn file trong thư mục category
+  const categoryDir = path.join(uploadsDir, finalCategory);
+  const filePath = path.join(categoryDir, baseFilename);
+  
+  // Kiểm tra file có trong thư mục uploads không (bảo mật)
+  if (!filePath.startsWith(uploadsDir)) {
+    throw new BadRequestError('Invalid file path');
   }
 
-  const file = bucket.file(objectName);
-  await file.delete();
-
-  success(res, { message: 'File deleted successfully' });
+  try {
+    // Xóa file chính (có thể là .webp hoặc format gốc)
+    await fs.unlink(filePath);
+    
+    // Xóa tất cả các version của ảnh
+    const fileExt = path.extname(baseFilename);
+    const fileNameWithoutExt = path.basename(baseFilename, fileExt);
+    
+    // Xóa các file version trong cùng category
+    const filesToDelete = [
+      path.join(categoryDir, `${fileNameWithoutExt}.webp`), // Web version
+      path.join(categoryDir, `${fileNameWithoutExt}_dashboard.webp`), // Dashboard version
+      path.join(categoryDir, `${fileNameWithoutExt}_thumb.jpg`), // Thumbnail
+    ];
+    
+    // Nếu không phải .webp, thử xóa file gốc và các version
+    if (fileExt.toLowerCase() !== '.webp') {
+      filesToDelete.push(filePath); // File gốc
+    }
+    
+    for (const fileToDelete of filesToDelete) {
+      try {
+        await fs.unlink(fileToDelete);
+      } catch {
+        // File không tồn tại, không sao
+      }
+    }
+    
+    success(res, { message: 'File deleted successfully' });
+  } catch (error) {
+    if (error.code === 'ENOENT') {
+      throw new BadRequestError('File not found');
+    }
+    throw error;
+  }
 });
 
 module.exports = {
-  getUploadUrl,
-  getReadUrl,
+  uploadFile,
+  uploadFiles,
   deleteFile,
 };
-
