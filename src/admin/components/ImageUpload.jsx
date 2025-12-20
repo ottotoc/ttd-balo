@@ -42,8 +42,6 @@ export default function ImageUpload({ value, onChange, label = 'Image', required
       setUploading(true)
       setError('')
 
-      console.log('📤 Uploading file to server...', { category })
-
       // Upload file trực tiếp lên server với category
       const result = await uploads.uploadFile(file, category)
       
@@ -59,14 +57,6 @@ export default function ImageUpload({ value, onChange, label = 'Image', required
         throw new Error('Server did not return image URL')
       }
 
-      console.log('✅ Upload successful!', webUrl)
-      console.log('📊 Available versions:', {
-        web: responseData.webUrl,
-        dashboard: responseData.dashboardUrl,
-        thumbnail: responseData.thumbnail,
-        original: responseData.url
-      })
-
       // Update preview: dùng dashboardUrl cho admin panel (nhẹ hơn)
       const previewUrl = dashboardUrl
       const fullUrl = previewUrl.startsWith('http') 
@@ -81,7 +71,9 @@ export default function ImageUpload({ value, onChange, label = 'Image', required
       onChange(urlToSave)
       
     } catch (err) {
-      console.error('❌ Upload error:', err)
+      if (import.meta.env.DEV) {
+        console.error('Upload error:', err)
+      }
       
       // Xử lý các loại lỗi khác nhau
       if (err.message === 'Failed to fetch' || err.message.includes('NetworkError')) {

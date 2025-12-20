@@ -190,12 +190,14 @@ nano /etc/nginx/sites-available/balotanthoidai.vn
 Nội dung:
 
 ```nginx
+# HTTP to HTTPS redirect
 server {
   listen 80;
   server_name balotanthoidai.vn www.balotanthoidai.vn;
   return 301 https://$host$request_uri;
 }
 
+# HTTPS server
 server {
   listen 443 ssl http2;
   server_name balotanthoidai.vn www.balotanthoidai.vn;
@@ -203,46 +205,101 @@ server {
   root /var/www/ttd-balo/ttd-balo/dist;
   index index.html;
 
+  # SSL certificates (managed by Certbot)
   ssl_certificate /etc/letsencrypt/live/balotanthoidai.vn/fullchain.pem;
   ssl_certificate_key /etc/letsencrypt/live/balotanthoidai.vn/privkey.pem;
+  include /etc/letsencrypt/options-ssl-nginx.conf;
+  ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
 
-  # Serve static files từ uploads (ảnh đã upload)
-  location /uploads/ {
-    alias /var/www/ttd-balo/ttd-balo/backend/uploads/;
-    expires 30d;
-    add_header Cache-Control "public, immutable";
-    access_log off;
+  # Tăng limit upload file size (mặc định Nginx là 1MB, cần ít nhất 30MB)
+  # Backend cho phép 30MB, set 50M để có buffer
+  client_max_body_size 50M;
+  client_body_buffer_size 128k;
+
+  # ========== LOCATION BLOCKS (thứ tự quan trọng - specific trước, general sau) ==========
+
+  # 1. ADMIN SPA - Phải đặt trước location / để match đúng
+  location ^~ /admin {
+    try_files $uri $uri/ /admin.html;
   }
 
-  # Frontend routes
-  location / {
-    try_files $uri $uri/ /index.html;
-  }
-
-  location = /admin {
-    try_files /admin.html =404;
-  }
-
-  # Backend API
+  # 2. API - Phải đặt trước location / để match đúng
   location ^~ /api/ {
     proxy_pass http://127.0.0.1:3000;
+    
+    # Headers
     proxy_set_header Host $host;
     proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header X-Forwarded-Proto $scheme;
+    
+    # Tăng timeout cho upload file lớn (5 phút)
+    proxy_read_timeout 300s;
+    proxy_connect_timeout 300s;
+    proxy_send_timeout 300s;
+    
+    # Buffer settings cho upload lớn
+    proxy_buffering off;
+    proxy_request_buffering off;
   }
 
-  # Socket.IO
+  # 3. Socket.IO (WebSocket) - Phải đặt trước location / để match đúng
   location /socket.io/ {
     proxy_pass http://127.0.0.1:3000/socket.io/;
+    
+    # WebSocket headers
     proxy_http_version 1.1;
     proxy_set_header Upgrade $http_upgrade;
     proxy_set_header Connection "upgrade";
+    
+    # Standard headers
     proxy_set_header Host $host;
     proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header X-Forwarded-Proto $scheme;
+    
+    # WebSocket timeouts
+    proxy_read_timeout 86400s;
+    proxy_send_timeout 86400s;
   }
+
+  # 4. UPLOADS - Serve static files từ uploads (ảnh đã upload)
+  # Phải đặt trước location / để match đúng
+  location /uploads/ {
+    alias /var/www/ttd-balo/ttd-balo/backend/uploads/;
+    
+    # Cache settings
+    expires 30d;
+    add_header Cache-Control "public, immutable";
+    
+    # Security headers
+    add_header X-Content-Type-Options "nosniff" always;
+    
+    # Disable access log để giảm I/O
+    access_log off;
+  }
+
+  # 5. MAIN SPA - Phải đặt cuối cùng (catch-all)
+  location / {
+    try_files $uri $uri/ /index.html;
+    
+    # Security headers
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-XSS-Protection "1; mode=block" always;
+  }
+
+  # Error pages
+  error_page 404 /index.html;
+  error_page 500 502 503 504 /50x.html;
+  
+  location = /50x.html {
+    root /usr/share/nginx/html;
+  }
+
+  # Logging
+  access_log /var/log/nginx/balotanthoidai.vn.access.log;
+  error_log /var/log/nginx/balotanthoidai.vn.error.log;
 }
 ```
 
@@ -454,6 +511,38 @@ node src/app.js
    ```
 
 **Lỗi upload ảnh:**
+
+**Lỗi 413 Request Entity Too Large:**
+
+Triệu chứng:
+- Upload ảnh bị lỗi `413 (Request Entity Too Large)`
+- Console: `POST ... 413 (Request Entity Too Large)`
+- Frontend nhận HTML error page thay vì JSON
+
+Nguyên nhân:
+- Nginx mặc định chỉ cho phép upload 1MB
+- Backend đã set 30MB nhưng Nginx chặn trước
+
+Cách fix:
+
+```bash
+# 1. Sửa nginx config
+nano /etc/nginx/sites-available/balotanthoidai.vn
+
+# 2. Thêm vào trong server block (sau ssl_certificate_key):
+client_max_body_size 50M;
+
+# 3. Thêm vào location /api/ (nếu chưa có):
+proxy_read_timeout 300s;
+proxy_connect_timeout 300s;
+proxy_send_timeout 300s;
+
+# 4. Test và reload
+nginx -t
+systemctl reload nginx
+```
+
+**Lỗi permissions:**
 ```bash
 # Kiểm tra permissions
 ls -la backend/uploads/

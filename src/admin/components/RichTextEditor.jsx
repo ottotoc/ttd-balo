@@ -20,7 +20,9 @@ export default function RichTextEditor({ value = '', onChange, placeholder = 'Vi
     
     // React 19+ không tương thích với react-quill@2.0.0
     if (reactVersion >= 19) {
-      console.warn('⚠️ React 19+ không tương thích với react-quill. Sử dụng textarea với preview.')
+      if (import.meta.env.DEV) {
+        console.warn('React 19+ không tương thích với react-quill. Sử dụng textarea với preview.')
+      }
       setUseQuill(false)
       setQuillError(true)
       return
@@ -35,7 +37,9 @@ export default function RichTextEditor({ value = '', onChange, placeholder = 'Vi
         setReactQuill(() => quillModule.default)
         setUseQuill(true)
       } catch (error) {
-        console.warn('react-quill không thể load. Sử dụng textarea đơn giản.')
+        if (import.meta.env.DEV) {
+          console.warn('react-quill không thể load. Sử dụng textarea đơn giản.')
+        }
         setUseQuill(false)
         setQuillError(true)
       }

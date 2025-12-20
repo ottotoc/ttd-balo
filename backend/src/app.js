@@ -77,22 +77,30 @@ app.use(errorHandler);
 
 // Socket.IO connection handling
 io.on('connection', (socket) => {
-  console.log('Client connected:', socket.id);
+  if (process.env.NODE_ENV === 'development') {
+    console.log('Client connected:', socket.id);
+  }
 
   socket.on('disconnect', () => {
-    console.log('Client disconnected:', socket.id);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Client disconnected:', socket.id);
+    }
   });
 
   // Join room for order updates (for users tracking their orders)
   socket.on('join:order', (orderId) => {
     socket.join(`order:${orderId}`);
-    console.log(`Client ${socket.id} joined order room: ${orderId}`);
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`Client ${socket.id} joined order room: ${orderId}`);
+    }
   });
 
   // Join room for product updates (for users viewing a product)
   socket.on('join:product', (productId) => {
     socket.join(`product:${productId}`);
-    console.log(`Client ${socket.id} joined product room: ${productId}`);
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`Client ${socket.id} joined product room: ${productId}`);
+    }
   });
 
   // Leave rooms

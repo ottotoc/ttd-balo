@@ -51,11 +51,6 @@ export default function BlogSection() {
         </div>
         <div className="row">
           {posts.map((post) => {
-            // Debug: Log coverUrl để kiểm tra
-            if (process.env.NODE_ENV === 'development') {
-              console.log('Blog Post:', post.title, 'CoverUrl:', post.coverUrl)
-            }
-            
             // Lấy URL ảnh - ưu tiên coverUrl từ backend
             let imageUrl = '/images/post-thumb-1.jpg' // Default placeholder
             

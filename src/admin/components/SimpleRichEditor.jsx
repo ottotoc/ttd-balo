@@ -145,7 +145,9 @@ export default function SimpleRichEditor({ value = '', onChange, placeholder = '
             onClick={() => {
               if (editorRef.current) {
                 const html = editorRef.current.innerHTML
-                console.log('HTML Output:', html)
+                if (import.meta.env.DEV) {
+                  console.log('HTML Output:', html)
+                }
                 alert('HTML đã được copy vào console!')
               }
             }}

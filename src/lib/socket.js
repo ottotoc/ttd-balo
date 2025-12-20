@@ -13,16 +13,21 @@ const socket = io(API_URL, {
 let isConnected = false;
 
 socket.on('connect', () => {
-  console.log('Socket connected:', socket.id);
+  if (import.meta.env.DEV) {
+    console.log('Socket connected:', socket.id);
+  }
   isConnected = true;
 });
 
 socket.on('disconnect', () => {
-  console.log('Socket disconnected');
+  if (import.meta.env.DEV) {
+    console.log('Socket disconnected');
+  }
   isConnected = false;
 });
 
 socket.on('connect_error', (error) => {
+  // Keep error logging for production debugging
   console.error('Socket connection error:', error);
 });
 

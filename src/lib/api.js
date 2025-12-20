@@ -33,7 +33,10 @@ async function apiCall(endpoint, options = {}) {
 
     return data;
   } catch (error) {
-    console.error('API Error:', error);
+    // Keep error logging for production debugging
+    if (import.meta.env.DEV) {
+      console.error('API Error:', error);
+    }
     throw error;
   }
 }
