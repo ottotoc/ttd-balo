@@ -173,9 +173,16 @@ npm ci
 npm run build
 ```
 
+Script `build` sẽ tự động:
+1. Build frontend với Vite → tạo thư mục `dist/`
+2. Copy thư mục `images/` vào `dist/images/` (tự động)
+
 Sau build phải có:
 - `dist/index.html`
 - `dist/admin.html`
+- `dist/images/` (chứa favicon, icons, placeholder images)
+
+**⚠️ QUAN TRỌNG:** Thư mục `images/` chứa các file static như favicon, icons (Zalo, Facebook), placeholder images. Script build sẽ tự động copy vào `dist/`, nhưng nếu build thủ công chỉ chạy `vite build`, cần chạy thêm `npm run copy-images`.
 
 ---
 
@@ -263,7 +270,23 @@ server {
     proxy_send_timeout 86400s;
   }
 
-  # 4. UPLOADS - Serve static files từ uploads (ảnh đã upload)
+  # 4. IMAGES - Serve static files từ images (local assets như favicon, icons)
+  # Phải đặt trước location / để match đúng
+  location /images/ {
+    alias /var/www/ttd-balo/ttd-balo/dist/images/;
+    
+    # Cache settings
+    expires 30d;
+    add_header Cache-Control "public, immutable";
+    
+    # Security headers
+    add_header X-Content-Type-Options "nosniff" always;
+    
+    # Disable access log để giảm I/O
+    access_log off;
+  }
+
+  # 5. UPLOADS - Serve static files từ uploads (ảnh đã upload)
   # Phải đặt trước location / để match đúng
   location /uploads/ {
     alias /var/www/ttd-balo/ttd-balo/backend/uploads/;
@@ -279,7 +302,7 @@ server {
     access_log off;
   }
 
-  # 5. MAIN SPA - Phải đặt cuối cùng (catch-all)
+  # 6. MAIN SPA - Phải đặt cuối cùng (catch-all)
   location / {
     try_files $uri $uri/ /index.html;
     
