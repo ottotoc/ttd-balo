@@ -16,15 +16,33 @@ export default function ProductDetail() {
   const [quantity, setQuantity] = useState(1)
   const [adding, setAdding] = useState(false)
   const [selectedImage, setSelectedImage] = useState(0)
+  const [selectedColor, setSelectedColor] = useState(null)
+  const [selectedSize, setSelectedSize] = useState(null)
+  const [selectedVariant, setSelectedVariant] = useState(null)
 
   const handleAddToCart = async () => {
+    // Nếu có variants nhưng chưa chọn đủ
+    if (product?.variants && product.variants.length > 0) {
+      if (!selectedColor || !selectedSize || !selectedVariant) {
+        alert('Vui lòng chọn đầy đủ màu sắc và kích thước!')
+        return
+      }
+      // Kiểm tra stock của variant
+      if (selectedVariant.stock < quantity) {
+        alert(`Chỉ còn ${selectedVariant.stock} sản phẩm trong kho!`)
+        return
+      }
+    }
+
     try {
       setAdding(true)
-      await addItem(product.id, null, quantity)
+      const variantId = selectedVariant?.id || null
+      await addItem(product.id, variantId, quantity)
       alert(`Đã thêm ${quantity} sản phẩm vào giỏ hàng!`)
-      // Optionally: Show toast or update cart UI
     } catch (error) {
-      console.error('Error adding to cart:', error)
+      if (import.meta.env.DEV) {
+        console.error('Error adding to cart:', error)
+      }
       alert('Lỗi: ' + error.message)
     } finally {
       setAdding(false)
@@ -32,7 +50,8 @@ export default function ProductDetail() {
   }
 
   const increaseQuantity = () => {
-    if (quantity < product?.stock) {
+    const maxStock = selectedVariant?.stock || product?.stock || 0
+    if (quantity < maxStock) {
       setQuantity(quantity + 1)
     }
   }
@@ -42,6 +61,74 @@ export default function ProductDetail() {
       setQuantity(quantity - 1)
     }
   }
+
+  // Tính toán available colors và sizes từ variants
+  const availableColors = React.useMemo(() => {
+    if (!product?.variants || product.variants.length === 0) return []
+    const colors = [...new Set(product.variants.map(v => v.color).filter(Boolean))]
+    return colors
+  }, [product?.variants])
+
+  const availableSizes = React.useMemo(() => {
+    if (!product?.variants || product.variants.length === 0) return []
+    // Nếu đã chọn màu, chỉ hiển thị sizes của màu đó
+    if (selectedColor) {
+      const sizes = [...new Set(
+        product.variants
+          .filter(v => v.color === selectedColor && v.stock > 0)
+          .map(v => v.size)
+          .filter(Boolean)
+      )]
+      return sizes
+    }
+    // Nếu chưa chọn màu, hiển thị tất cả sizes có stock
+    const sizes = [...new Set(
+      product.variants
+        .filter(v => v.stock > 0)
+        .map(v => v.size)
+        .filter(Boolean)
+    )]
+    return sizes
+  }, [product?.variants, selectedColor])
+
+  // Tìm variant dựa trên color và size đã chọn
+  React.useEffect(() => {
+    if (!product?.variants || product.variants.length === 0) {
+      setSelectedVariant(null)
+      return
+    }
+
+    if (selectedColor && selectedSize) {
+      const variant = product.variants.find(
+        v => v.color === selectedColor && v.size === selectedSize && v.stock > 0
+      )
+      setSelectedVariant(variant || null)
+    } else {
+      setSelectedVariant(null)
+    }
+  }, [product?.variants, selectedColor, selectedSize])
+
+  // Auto-select first available color/size nếu có variants
+  React.useEffect(() => {
+    if (product?.variants && product.variants.length > 0) {
+      const firstVariant = product.variants.find(v => v.stock > 0)
+      if (firstVariant) {
+        if (firstVariant.color && !selectedColor) {
+          setSelectedColor(firstVariant.color)
+        }
+        if (firstVariant.size && !selectedSize) {
+          setSelectedSize(firstVariant.size)
+        }
+      }
+    }
+  }, [product?.variants])
+
+  // Reset size khi đổi màu
+  React.useEffect(() => {
+    if (selectedColor) {
+      setSelectedSize(null)
+    }
+  }, [selectedColor])
 
   if (loading) {
     return (
@@ -87,6 +174,14 @@ export default function ProductDetail() {
   
   // Calculate sale price and discount
   const hasSalePrice = product.salePrice && product.salePrice > 0 && product.salePrice < product.price
+  
+  // Tính stock và price hiện tại (variant hoặc product)
+  const currentStock = selectedVariant?.stock ?? product?.stock ?? 0
+  const currentPrice = selectedVariant?.price 
+    ? Number(selectedVariant.price) 
+    : (hasSalePrice ? Number(product.salePrice) : Number(product.price))
+  const currentFormattedPrice = currentPrice.toLocaleString('vi-VN') + ' ₫'
+  
   const displayPrice = hasSalePrice ? product.salePrice : product.price
   const formattedPrice = Number(displayPrice).toLocaleString('vi-VN') + ' ₫'
   const discountPercent = hasSalePrice 
@@ -209,8 +304,13 @@ export default function ProductDetail() {
                 {/* Price */}
                 <div className="product-price mb-4">
                   <div className="d-flex align-items-center gap-3">
-                    <h2 className="price mb-0">{formattedPrice}</h2>
-                    {hasSalePrice && (
+                    <h2 className="price mb-0" style={{ color: '#ff6600' }}>{currentFormattedPrice}</h2>
+                    {selectedVariant?.price && product.price && Number(selectedVariant.price) !== Number(product.price) && (
+                      <span className="original-price text-decoration-line-through text-muted">
+                        {Number(product.price).toLocaleString('vi-VN')} ₫
+                      </span>
+                    )}
+                    {!selectedVariant && hasSalePrice && (
                       <span className="original-price text-decoration-line-through text-muted">
                         {Number(product.price).toLocaleString('vi-VN')} ₫
                       </span>
@@ -225,14 +325,76 @@ export default function ProductDetail() {
                   </div>
                 )}
 
+                {/* Variants Selection - Color */}
+                {availableColors.length > 0 && (
+                  <div className="variant-selection mb-3">
+                    <label className="form-label fw-bold">Màu sắc:</label>
+                    <div className="d-flex flex-wrap gap-2">
+                      {availableColors.map((color) => (
+                        <button
+                          key={color}
+                          type="button"
+                          className={`btn ${selectedColor === color ? 'btn-primary' : 'btn-outline-secondary'}`}
+                          onClick={() => setSelectedColor(color)}
+                          style={{
+                            minWidth: '80px',
+                            border: selectedColor === color ? '2px solid #ff6600' : '1px solid #dee2e6',
+                            backgroundColor: selectedColor === color ? '#ff6600' : 'white',
+                            color: selectedColor === color ? 'white' : '#333'
+                          }}
+                        >
+                          {color}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Variants Selection - Size */}
+                {availableSizes.length > 0 && (
+                  <div className="variant-selection mb-3">
+                    <label className="form-label fw-bold">Kích thước:</label>
+                    <div className="d-flex flex-wrap gap-2">
+                      {availableSizes.map((size) => {
+                        // Tìm variant tương ứng để check stock
+                        const variantForSize = selectedColor
+                          ? product.variants.find(v => v.color === selectedColor && v.size === size)
+                          : product.variants.find(v => v.size === size)
+                        const isOutOfStock = !variantForSize || variantForSize.stock === 0
+                        
+                        return (
+                          <button
+                            key={size}
+                            type="button"
+                            className={`btn ${selectedSize === size ? 'btn-primary' : 'btn-outline-secondary'}`}
+                            onClick={() => !isOutOfStock && setSelectedSize(size)}
+                            disabled={isOutOfStock}
+                            style={{
+                              minWidth: '60px',
+                              border: selectedSize === size ? '2px solid #ff6600' : '1px solid #dee2e6',
+                              backgroundColor: selectedSize === size ? '#ff6600' : (isOutOfStock ? '#f5f5f5' : 'white'),
+                              color: selectedSize === size ? 'white' : (isOutOfStock ? '#999' : '#333'),
+                              cursor: isOutOfStock ? 'not-allowed' : 'pointer',
+                              opacity: isOutOfStock ? 0.5 : 1
+                            }}
+                            title={isOutOfStock ? 'Hết hàng' : size}
+                          >
+                            {size}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </div>
+                )}
+
                 {/* Stock Status */}
                 <div className="stock-status mb-4">
-                  {product.stock > 0 ? (
+                  {currentStock > 0 ? (
                     <div className="alert alert-success d-inline-flex align-items-center">
                       <svg width="20" height="20" fill="currentColor" className="me-2" viewBox="0 0 16 16">
                         <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
                       </svg>
-                      Còn hàng ({product.stock} sản phẩm)
+                      Còn hàng ({currentStock} sản phẩm)
                     </div>
                   ) : (
                     <div className="alert alert-danger d-inline-flex align-items-center">
@@ -245,11 +407,11 @@ export default function ProductDetail() {
                 </div>
 
                 {/* Quantity & Add to Cart */}
-                {product.stock > 0 && (
+                {currentStock > 0 && (
                   <div className="add-to-cart-section">
                     <div className="d-flex gap-3 mb-4">
                       {/* Quantity Selector */}
-                      <div className="quantity-selector">
+                      <div className="quantity-selector d-flex align-items-center">
                         <button 
                           className="btn btn-outline-secondary"
                           onClick={decreaseQuantity}
@@ -265,18 +427,18 @@ export default function ProductDetail() {
                           value={quantity}
                           onChange={(e) => {
                             const val = parseInt(e.target.value) || 1
-                            if (val >= 1 && val <= product.stock) {
+                            if (val >= 1 && val <= currentStock) {
                               setQuantity(val)
                             }
                           }}
                           min="1"
-                          max={product.stock}
+                          max={currentStock}
                           style={{ width: '80px' }}
                         />
                         <button 
                           className="btn btn-outline-secondary"
                           onClick={increaseQuantity}
-                          disabled={quantity >= product.stock}
+                          disabled={quantity >= currentStock}
                         >
                           <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                             <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
@@ -289,7 +451,12 @@ export default function ProductDetail() {
                     <button 
                       className="btn btn-primary btn-lg w-100"
                       onClick={handleAddToCart}
-                      disabled={adding}
+                      disabled={adding || (product?.variants?.length > 0 && (!selectedColor || !selectedSize))}
+                      style={{ 
+                        backgroundColor: '#ff6600', 
+                        borderColor: '#ff6600',
+                        opacity: (product?.variants?.length > 0 && (!selectedColor || !selectedSize)) ? 0.6 : 1
+                      }}
                     >
                       {adding ? (
                         <>

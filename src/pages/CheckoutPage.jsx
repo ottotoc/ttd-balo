@@ -462,6 +462,14 @@ export default function CheckoutPage() {
                           </div>
                           <div className="flex-grow-1 ms-3">
                             <h6 className="mb-1 small">{item.product?.name}</h6>
+                            {/* Variant Info */}
+                            {(item.variant?.color || item.variant?.size) && (
+                              <p className="mb-1 small text-muted" style={{ fontSize: '0.75rem' }}>
+                                {item.variant.color && <span>Màu: {item.variant.color}</span>}
+                                {item.variant.color && item.variant.size && <span> • </span>}
+                                {item.variant.size && <span>Size: {item.variant.size}</span>}
+                              </p>
+                            )}
                             <p className="mb-1 small text-muted">
                               SL: {item.quantity} × {Number(item.price).toLocaleString('vi-VN')} ₫
                             </p>

@@ -26,13 +26,18 @@ export function getImageUrl(imageUrl, version = 'web') {
     let category = '';
     let filename = '';
     
-    if (pathParts.length > 1) {
+    // Check if first part is a known category
+    const knownCategories = ['projects', 'blog', 'banners', 'general'];
+    if (pathParts.length > 1 && knownCategories.includes(pathParts[0])) {
       // Có category: /uploads/{category}/{filename}
       category = pathParts[0];
-      filename = pathParts.slice(1).join('/'); // Join lại nếu có subfolder (không có nhưng để an toàn)
+      filename = pathParts.slice(1).join('/');
     } else {
       // Legacy format: /uploads/{filename} - không có category
-      filename = pathParts[0];
+      // Hoặc category không được nhận diện
+      filename = pathParts.join('/');
+      // Thử đoán category từ context (nếu có thể)
+      // Nhưng tốt nhất là giữ nguyên format
     }
     
     const fileExt = filename.match(/\.(webp|jpg|jpeg|png|gif)$/i)?.[1]?.toLowerCase();

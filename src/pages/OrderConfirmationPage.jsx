@@ -201,12 +201,14 @@ export default function OrderConfirmationPage() {
                               <div>
                                 <strong>{item.name}</strong>
                                 {item.attributes && (
-                                  <div className="text-muted small">
-                                    {Object.entries(item.attributes).map(([key, value]) => (
-                                      <span key={key} className="me-2">
-                                        {key}: {value}
-                                      </span>
-                                    ))}
+                                  <div className="text-muted small mt-1">
+                                    {item.attributes.color && (
+                                      <span className="me-2">Màu: {item.attributes.color}</span>
+                                    )}
+                                    {item.attributes.color && item.attributes.size && <span> • </span>}
+                                    {item.attributes.size && (
+                                      <span>Size: {item.attributes.size}</span>
+                                    )}
                                   </div>
                                 )}
                                 <div className="text-muted small">SKU: {item.sku}</div>

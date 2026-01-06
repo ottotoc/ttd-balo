@@ -24,7 +24,7 @@ const resizeImage = async (req, res, next) => {
   const relativePath = path.relative(uploadsBaseDir, fileDir);
   if (relativePath && !relativePath.startsWith('..')) {
     const categoryFromPath = relativePath.split(path.sep)[0];
-    if (['projects', 'blog', 'general'].includes(categoryFromPath)) {
+    if (['projects', 'blog', 'banners', 'general'].includes(categoryFromPath)) {
       category = categoryFromPath;
     }
   }
@@ -170,7 +170,7 @@ const resizeImages = async (req, res, next) => {
       const relativePath = path.relative(uploadsBaseDir, fileDir);
       if (relativePath && !relativePath.startsWith('..')) {
         const categoryFromPath = relativePath.split(path.sep)[0];
-        if (['projects', 'blog', 'general'].includes(categoryFromPath)) {
+        if (['projects', 'blog', 'banners', 'general'].includes(categoryFromPath)) {
           category = categoryFromPath;
         }
       }

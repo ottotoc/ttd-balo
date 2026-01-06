@@ -23,8 +23,17 @@
     <meta name="twitter:description" content="Mua balo, túi xách chính hãng với giá tốt tại Tân Thời Đại.">
     <meta name="twitter:image" content="https://example.com/images/logo.png">
 
-    <link rel="icon" href="/images/logo.png">
-    <meta name="theme-color" content="#0ea5e9">
+    <!-- Favicon - Google tìm ở root trước, sau đó mới tìm trong thư mục -->
+    <!-- Đặt favicon ở root để Google dễ tìm hơn -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-removebg-preview.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-32x32-removebg-preview.png">
+    <link rel="shortcut icon" type="image/png" href="/images/favicon-32x32-removebg-preview.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon-32x32-removebg-preview.png">
+    <!-- Fallback cho các trình duyệt cũ -->
+    <link rel="icon" href="/images/favicon-32x32-removebg-preview.png" type="image/png">
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#ff6600">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Open+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">

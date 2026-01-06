@@ -10,6 +10,7 @@ export default function AdminSidebar({ currentPage, onNavigate }) {
     { id: 'discounts', label: 'Discounts', icon: '💰' },
     { id: 'reviews', label: 'Reviews', icon: '⭐' },
     { id: 'blog', label: 'Blog', icon: '📝' },
+    { id: 'banners', label: 'Banners', icon: '🖼️' },
     { id: 'announcements', label: 'Announcements', icon: '📢' },
     { id: 'tiktok', label: 'TikTok Videos', icon: '📱' },
   ]

@@ -142,55 +142,94 @@ export default function LiveActivityWidget() {
         width: '350px',
         maxWidth: 'calc(100vw - 40px)',
         backgroundColor: '#fff',
-        borderRadius: '12px',
-        boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
-        zIndex: 1099,
+        borderRadius: '16px',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08)',
+        zIndex: 1050, // Cao hơn để hiển thị trên các element khác, nhưng vẫn thấp hơn modal (thường 1100+)
         overflow: 'hidden',
-        transition: 'all 0.3s ease'
+        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+        backdropFilter: 'blur(10px)',
+        border: '1px solid rgba(255, 255, 255, 0.8)'
       }}
     >
       {/* Header */}
       <div 
         style={{
-          background: 'linear-gradient(135deg, #ff6600 0%, #FFC43F 100%)',
+          background: 'linear-gradient(135deg, #ff6600 0%, #ff8533 50%, #FFC43F 100%)',
           color: '#fff',
-          padding: '15px',
+          padding: '16px 18px',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          cursor: 'pointer'
+          cursor: 'pointer',
+          position: 'relative',
+          overflow: 'hidden'
         }}
         onClick={() => setIsMinimized(!isMinimized)}
       >
-        <div>
-          <h6 className="mb-0 fw-bold" style={{ fontSize: '14px' }}>
+        {/* Decorative overlay */}
+        <div style={{
+          position: 'absolute',
+          top: '-50%',
+          right: '-20%',
+          width: '150%',
+          height: '150%',
+          background: 'radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%)',
+          pointerEvents: 'none'
+        }}></div>
+        
+        <div style={{ position: 'relative', zIndex: 1 }}>
+          <h6 className="mb-0 fw-bold" style={{ 
+            fontSize: '15px',
+            letterSpacing: '0.3px',
+            textShadow: '0 1px 2px rgba(0,0,0,0.1)'
+          }}>
             Hoạt động trực tiếp
           </h6>
-          <div style={{ fontSize: '12px', opacity: 0.9, marginTop: '4px' }}>
+          <div style={{ 
+            fontSize: '12px', 
+            opacity: 0.95, 
+            marginTop: '6px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px'
+          }}>
             <span className="d-inline-block" style={{
-              width: '8px',
-              height: '8px',
+              width: '10px',
+              height: '10px',
               backgroundColor: '#4ade80',
               borderRadius: '50%',
-              marginRight: '6px',
-              animation: 'pulse 2s infinite'
+              boxShadow: '0 0 8px rgba(74, 222, 128, 0.6)',
+              animation: 'pulse 2s infinite',
+              flexShrink: 0
             }}></span>
-            <span>{onlineUsers} người đang online</span>
+            <span style={{ fontWeight: '500' }}>{onlineUsers} người đang online</span>
           </div>
         </div>
         <button
           style={{
-            background: 'transparent',
+            background: 'rgba(255, 255, 255, 0.2)',
             border: 'none',
             color: '#fff',
-            fontSize: '18px',
+            fontSize: '16px',
             cursor: 'pointer',
-            padding: '0',
-            width: '24px',
-            height: '24px',
+            padding: '6px',
+            width: '32px',
+            height: '32px',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center'
+            justifyContent: 'center',
+            borderRadius: '8px',
+            transition: 'all 0.2s ease',
+            position: 'relative',
+            zIndex: 1
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)'
+            e.currentTarget.style.transform = 'scale(1.1)'
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)'
+            e.currentTarget.style.transform = 'scale(1)'
           }}
           onClick={(e) => {
             e.stopPropagation()
@@ -290,9 +329,11 @@ export default function LiveActivityWidget() {
         @keyframes pulse {
           0%, 100% {
             opacity: 1;
+            transform: scale(1);
           }
           50% {
-            opacity: 0.5;
+            opacity: 0.7;
+            transform: scale(1.1);
           }
         }
         
@@ -326,9 +367,20 @@ export default function LiveActivityWidget() {
 
         @media (max-width: 768px) {
           .live-activity-widget {
-            width: calc(100vw - 20px);
+            /* Trên mobile: đặt widget ở bên trái, tránh đè lên floating buttons bên phải */
+            width: calc(100vw - 90px); /* Trừ đi 90px: 45px (button) + 20px (right margin) + 25px (buffer) */
             left: 10px;
             bottom: 10px;
+            max-width: calc(100vw - 90px);
+            z-index: 1050; /* Giữ z-index cao để hiển thị đẹp */
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+          }
+        }
+        
+        /* Đảm bảo floating buttons luôn ở trên */
+        @media (max-width: 768px) {
+          .floating-buttons-container {
+            z-index: 1060 !important; /* Cao hơn LiveActivityWidget một chút */
           }
         }
       `}</style>

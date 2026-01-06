@@ -14,7 +14,6 @@ import TestimonialsSection from '../components/sections/TestimonialsSection.jsx'
 import BlogSection from '../components/sections/BlogSection.jsx'
 import AppPromo from '../components/sections/AppPromo.jsx'
 import TikTokSection from '../components/sections/TikTokSection.jsx'
-import FAQSection from '../components/sections/FAQSection.jsx'
 import Benefits from '../components/sections/Benefits.jsx'
 import ScrollToTop from '../components/ui/ScrollToTop.jsx'
 import LiveActivityWidget from '../components/ui/LiveActivityWidget.jsx'
@@ -36,7 +35,6 @@ export default function HomePage() {
       <BlogSection />
       <AppPromo />
       <TikTokSection />
-      <FAQSection />
       <Benefits />
       <Footer />
       <ScrollToTop />

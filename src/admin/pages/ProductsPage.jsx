@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { products, catalog } from '../../lib/api'
 import ImageUpload from '../components/ImageUpload'
 import { slugify } from '../../lib/slugify'
+import Toast from '../components/Toast'
 
 const DISPLAY_SECTIONS = [
   { value: 'bestselling', label: 'Best Selling' },
@@ -35,10 +36,22 @@ export default function ProductsPage() {
     description: '',
     featured: false,
     published: true,
+    displaySections: [],
+  })
+  const [variants, setVariants] = useState([])
+  const [showVariantsModal, setShowVariantsModal] = useState(false)
+  const [editingVariant, setEditingVariant] = useState(null)
+  const [variantForm, setVariantForm] = useState({
+    color: '',
+    size: '',
+    sku: '',
+    price: '',
+    stock: 0,
   })
   const [slugManuallyEdited, setSlugManuallyEdited] = useState(false)
   const [categories, setCategories] = useState([])
   const [brands, setBrands] = useState([])
+  const [toast, setToast] = useState(null)
 
   useEffect(() => {
     loadProducts()
@@ -77,6 +90,7 @@ export default function ProductsPage() {
   const resetForm = () => {
     setEditingProduct(null)
     setSlugManuallyEdited(false)
+    setVariants([])
     setForm({
       name: '',
       slug: '',
@@ -91,7 +105,19 @@ export default function ProductsPage() {
       description: '',
       featured: false,
       published: true,
+      displaySections: [],
     })
+  }
+
+  const resetVariantForm = () => {
+    setVariantForm({
+      color: '',
+      size: '',
+      sku: '',
+      price: '',
+      stock: 0,
+    })
+    setEditingVariant(null)
   }
 
   const openCreate = () => {
@@ -99,7 +125,7 @@ export default function ProductsPage() {
     setShowFormModal(true)
   }
 
-  const openEdit = (product) => {
+  const openEdit = async (product) => {
     setEditingProduct(product)
     setSlugManuallyEdited(true) // When editing, consider slug as manually set
     setForm({
@@ -116,7 +142,21 @@ export default function ProductsPage() {
       description: product.description || '',
       featured: !!product.featured,
       published: !!product.published,
+      displaySections: product.displaySections || [],
     })
+    
+    // Load variants từ product (có thể từ API response)
+    // Đảm bảo variants có id từ database
+    const variantsData = product.variants || []
+    setVariants(variantsData.map(v => ({
+      id: v.id, // ID từ database
+      color: v.color || null,
+      size: v.size || null,
+      sku: v.sku || null,
+      price: v.price ? Number(v.price) : null,
+      stock: Number(v.stock) || 0,
+    })))
+    
     setShowFormModal(true)
   }
 
@@ -168,21 +208,39 @@ export default function ProductsPage() {
         description: form.description || undefined,
         featured: !!form.featured,
         published: !!form.published,
+        displaySections: form.displaySections && form.displaySections.length > 0 ? form.displaySections : [],
         // Thêm images array
         images: form.imageUrl ? [{ url: form.imageUrl, isPrimary: true, position: 0 }] : undefined,
       }
 
+      // Thêm variants vào payload nếu có
+      // Backend sẽ xóa variants cũ và tạo lại, nên không cần gửi id
+      if (variants.length > 0) {
+        payload.variants = variants.map(v => ({
+          color: v.color || null,
+          size: v.size || null,
+          sku: v.sku || null,
+          price: v.price ? Number(v.price) : null,
+          stock: Number(v.stock) || 0,
+        }))
+      } else {
+        // Nếu không có variants, gửi mảng rỗng để xóa tất cả variants cũ
+        payload.variants = []
+      }
+
       if (editingProduct) {
         await products.update(editingProduct.id, payload)
+        setToast({ type: 'success', message: 'Cập nhật sản phẩm thành công!' })
       } else {
         await products.create(payload)
+        setToast({ type: 'success', message: 'Tạo sản phẩm thành công!' })
       }
 
       setShowFormModal(false)
       resetForm()
       loadProducts()
     } catch (error) {
-      alert('Error: ' + error.message)
+      setToast({ type: 'error', message: 'Lỗi: ' + (error.message || 'Không thể lưu sản phẩm') })
     } finally {
       setSaving(false)
     }
@@ -235,12 +293,68 @@ export default function ProductsPage() {
     }
   }
 
+  // Variants Management
+  const openVariantsModal = () => {
+    resetVariantForm()
+    setShowVariantsModal(true)
+  }
+
+  const handleAddVariant = () => {
+    if (!variantForm.color && !variantForm.size) {
+      alert('Vui lòng nhập ít nhất Màu sắc hoặc Kích thước!')
+      return
+    }
+    if (variantForm.stock < 0) {
+      alert('Tồn kho không được âm!')
+      return
+    }
+    
+    const newVariant = {
+      id: editingVariant?.id || Date.now(), // Temporary ID for new variants
+      color: variantForm.color || null,
+      size: variantForm.size || null,
+      sku: variantForm.sku || null,
+      price: variantForm.price ? Number(variantForm.price) : null,
+      stock: Number(variantForm.stock) || 0,
+    }
+
+    if (editingVariant) {
+      // Update existing variant
+      setVariants(variants.map(v => v.id === editingVariant.id ? newVariant : v))
+    } else {
+      // Add new variant
+      setVariants([...variants, newVariant])
+    }
+    
+    resetVariantForm()
+    setShowVariantsModal(false)
+  }
+
+  const handleEditVariant = (variant) => {
+    setEditingVariant(variant)
+    setVariantForm({
+      color: variant.color || '',
+      size: variant.size || '',
+      sku: variant.sku || '',
+      price: variant.price ? Number(variant.price) : '',
+      stock: variant.stock || 0,
+    })
+    setShowVariantsModal(true)
+  }
+
+  const handleDeleteVariant = (variantId) => {
+    if (!confirm('Bạn có chắc muốn xóa variant này?')) return
+    setVariants(variants.filter(v => v.id !== variantId))
+  }
+
   if (loading) {
     return <div>Loading products...</div>
   }
 
   return (
-    <div>
+    <>
+      {toast && <Toast toast={toast} onClose={() => setToast(null)} />}
+      <div>
       <div className="data-table">
         <div className="data-table-header">
           <h2>Products ({total})</h2>
@@ -571,6 +685,113 @@ export default function ProductsPage() {
                       </span>
                     </label>
                   </div>
+
+                  {/* Display Sections - Full Width */}
+                  <div className="form-group form-group-full" style={{ marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: '1px solid #dee2e6' }}>
+                    <label className="fw-bold mb-3">Hiển thị trong các nhóm sản phẩm</label>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                      {DISPLAY_SECTIONS.map(section => (
+                        <label 
+                          key={section.value} 
+                          className="d-flex align-items-center"
+                          style={{ cursor: 'pointer', padding: '8px', borderRadius: '4px', border: '1px solid #dee2e6' }}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={form.displaySections?.includes(section.value) || false}
+                            onChange={(e) => {
+                              const sections = form.displaySections || []
+                              if (e.target.checked) {
+                                setForm(prev => ({ ...prev, displaySections: [...sections, section.value] }))
+                              } else {
+                                setForm(prev => ({ ...prev, displaySections: sections.filter(s => s !== section.value) }))
+                              }
+                            }}
+                            style={{ marginRight: '8px', width: '18px', height: '18px' }}
+                          />
+                          <div>
+                            <div style={{ fontWeight: 500 }}>{section.label}</div>
+                            <small className="text-muted">
+                              {section.value === 'bestselling' && 'Hiển thị trong mục "Sản phẩm bán chạy"'}
+                              {section.value === 'justarrived' && 'Hiển thị trong mục "Sản phẩm mới về"'}
+                              {section.value === 'mostpopular' && 'Hiển thị trong mục "Sản phẩm phổ biến"'}
+                              {section.value === 'featured' && 'Hiển thị trong mục "Sản phẩm nổi bật"'}
+                            </small>
+                          </div>
+                        </label>
+                      ))}
+                    </div>
+                    <div className="alert alert-info mt-3" style={{ fontSize: '0.9rem' }}>
+                      <strong>Lưu ý:</strong> Sản phẩm có thể xuất hiện ở nhiều vị trí cùng lúc
+                    </div>
+                  </div>
+
+                  {/* Variants Management */}
+                  <div className="form-group form-group-full" style={{ marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: '1px solid #dee2e6' }}>
+                    <div className="d-flex justify-content-between align-items-center mb-3">
+                      <label className="fw-bold mb-0">Biến thể sản phẩm (Màu sắc & Kích thước)</label>
+                      <button
+                        type="button"
+                        className="btn btn-sm btn-outline-primary"
+                        onClick={openVariantsModal}
+                      >
+                        + Thêm biến thể
+                      </button>
+                    </div>
+                    
+                    {variants.length > 0 ? (
+                      <div className="table-responsive">
+                        <table className="table table-sm table-bordered">
+                          <thead>
+                            <tr>
+                              <th>Màu sắc</th>
+                              <th>Kích thước</th>
+                              <th>SKU</th>
+                              <th>Giá (₫)</th>
+                              <th>Tồn kho</th>
+                              <th>Hành động</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {variants.map((variant, index) => (
+                              <tr key={variant.id || index}>
+                                <td>{variant.color || '-'}</td>
+                                <td>{variant.size || '-'}</td>
+                                <td>{variant.sku || '-'}</td>
+                                <td>{variant.price ? Number(variant.price).toLocaleString('vi-VN') : '-'}</td>
+                                <td>{variant.stock}</td>
+                                <td>
+                                  <div className="btn-group btn-group-sm">
+                                    <button
+                                      type="button"
+                                      className="btn btn-outline-primary"
+                                      onClick={() => handleEditVariant(variant)}
+                                    >
+                                      Sửa
+                                    </button>
+                                    <button
+                                      type="button"
+                                      className="btn btn-outline-danger"
+                                      onClick={() => handleDeleteVariant(variant.id)}
+                                    >
+                                      Xóa
+                                    </button>
+                                  </div>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    ) : (
+                      <div className="text-muted text-center py-3" style={{ backgroundColor: '#f8f9fa', borderRadius: '4px' }}>
+                        Chưa có biến thể nào. Nhấn "Thêm biến thể" để thêm.
+                      </div>
+                    )}
+                    <small className="form-text text-muted d-block mt-2">
+                      💡 Biến thể cho phép sản phẩm có nhiều màu sắc và kích thước khác nhau với giá và tồn kho riêng.
+                    </small>
+                  </div>
                 </div>
               </div>
               <div className="modal-footer">
@@ -653,6 +874,130 @@ export default function ProductsPage() {
           </div>
         </div>
       )}
-    </div>
+
+      {/* Modal for managing variants */}
+      {showVariantsModal && (
+        <div 
+          className="modal show d-block" 
+          tabIndex="-1" 
+          style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowVariantsModal(false)
+              resetVariantForm()
+            }
+          }}
+        >
+          <div className="modal-dialog modal-lg modal-dialog-centered">
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+              <div className="modal-header">
+                <h5 className="modal-title">
+                  {editingVariant ? 'Sửa biến thể' : 'Thêm biến thể mới'}
+                </h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={() => {
+                    setShowVariantsModal(false)
+                    resetVariantForm()
+                  }}
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div className="modal-body">
+                <div className="row g-3">
+                  {/* Color */}
+                  <div className="col-md-6">
+                    <label className="form-label">Màu sắc</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={variantForm.color}
+                      onChange={(e) => setVariantForm({ ...variantForm, color: e.target.value })}
+                      placeholder="Ví dụ: Đỏ, Xanh, Đen..."
+                    />
+                    <small className="form-text text-muted">Để trống nếu không có màu</small>
+                  </div>
+
+                  {/* Size */}
+                  <div className="col-md-6">
+                    <label className="form-label">Kích thước</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={variantForm.size}
+                      onChange={(e) => setVariantForm({ ...variantForm, size: e.target.value })}
+                      placeholder="Ví dụ: S, M, L, 15.6 inch..."
+                    />
+                    <small className="form-text text-muted">Để trống nếu không có size</small>
+                  </div>
+
+                  {/* SKU */}
+                  <div className="col-md-6">
+                    <label className="form-label">SKU (tùy chọn)</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={variantForm.sku}
+                      onChange={(e) => setVariantForm({ ...variantForm, sku: e.target.value })}
+                      placeholder="Mã SKU riêng cho variant này"
+                    />
+                    <small className="form-text text-muted">Để trống sẽ dùng SKU của sản phẩm</small>
+                  </div>
+
+                  {/* Price */}
+                  <div className="col-md-6">
+                    <label className="form-label">Giá (₫) - tùy chọn</label>
+                    <input
+                      type="number"
+                      className="form-control"
+                      value={variantForm.price}
+                      onChange={(e) => setVariantForm({ ...variantForm, price: e.target.value })}
+                      min="0"
+                      step="1000"
+                      placeholder="Để trống dùng giá sản phẩm"
+                    />
+                    <small className="form-text text-muted">Giá riêng cho variant này (nếu khác giá sản phẩm)</small>
+                  </div>
+
+                  {/* Stock */}
+                  <div className="col-md-6">
+                    <label className="form-label">Tồn kho <span className="text-danger">*</span></label>
+                    <input
+                      type="number"
+                      className="form-control"
+                      value={variantForm.stock}
+                      onChange={(e) => setVariantForm({ ...variantForm, stock: parseInt(e.target.value) || 0 })}
+                      min="0"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => {
+                    setShowVariantsModal(false)
+                    resetVariantForm()
+                  }}
+                >
+                  Hủy
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={handleAddVariant}
+                >
+                  {editingVariant ? 'Cập nhật' : 'Thêm'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      </div>
+    </>
   )
 }

@@ -14,7 +14,7 @@ const storage = multer.diskStorage({
     const category = req.query.category || req.body.category || 'general';
     
     // Validate category
-    const allowedCategories = ['projects', 'blog', 'general'];
+    const allowedCategories = ['projects', 'blog', 'banners', 'general'];
     const finalCategory = allowedCategories.includes(category) ? category : 'general';
     
     // Thư mục uploads nằm ở backend/uploads/{category}

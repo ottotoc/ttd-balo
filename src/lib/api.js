@@ -35,7 +35,7 @@ async function apiCall(endpoint, options = {}) {
   } catch (error) {
     // Keep error logging for production debugging
     if (import.meta.env.DEV) {
-      console.error('API Error:', error);
+    console.error('API Error:', error);
     }
     throw error;
   }

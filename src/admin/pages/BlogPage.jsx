@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { blog } from '../../lib/api'
 import ImageUpload from '../components/ImageUpload'
 import SimpleRichEditor from '../components/SimpleRichEditor'
+import Toast from '../components/Toast'
 
 export default function BlogPage() {
   const [posts, setPosts] = useState([])
@@ -9,6 +10,7 @@ export default function BlogPage() {
   const [error, setError] = useState(null)
   const [editingId, setEditingId] = useState(null)
   const [showModal, setShowModal] = useState(false)
+  const [toast, setToast] = useState(null)
   const [formData, setFormData] = useState({
     title: '',
     slug: '',
@@ -61,8 +63,10 @@ export default function BlogPage() {
     try {
       if (editingId) {
         await blog.update(editingId, formData)
+        setToast({ type: 'success', message: 'Cập nhật blog post thành công!' })
       } else {
         await blog.create(formData)
+        setToast({ type: 'success', message: 'Tạo blog post thành công!' })
       }
 
       setFormData({
@@ -78,7 +82,10 @@ export default function BlogPage() {
       fetchPosts()
     } catch (err) {
       setError('Failed to save blog post')
-      console.error(err)
+      setToast({ type: 'error', message: 'Lỗi: ' + (err.message || 'Không thể lưu blog post') })
+      if (import.meta.env.DEV) {
+        console.error(err)
+      }
     }
   }
 
@@ -143,7 +150,9 @@ export default function BlogPage() {
   }
 
   return (
-    <div className="container-fluid py-4">
+    <>
+      {toast && <Toast toast={toast} onClose={() => setToast(null)} />}
+      <div className="container-fluid py-4">
       <div className="row mb-4">
         <div className="col-12">
           <div className="d-flex justify-content-between align-items-center">
@@ -690,7 +699,8 @@ export default function BlogPage() {
           background: #a8a8a8;
         }
       `}</style>
-    </div>
+      </div>
+    </>
   )
 }
 

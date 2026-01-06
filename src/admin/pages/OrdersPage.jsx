@@ -5,6 +5,8 @@ export default function OrdersPage() {
   const [orderList, setOrderList] = useState([])
   const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(1)
+  const [selectedOrder, setSelectedOrder] = useState(null)
+  const [showOrderModal, setShowOrderModal] = useState(false)
 
   useEffect(() => {
     loadOrders()
@@ -163,9 +165,14 @@ export default function OrdersPage() {
                       <div className="btn-group">
                         <button 
                           className="btn btn-sm btn-outline-primary"
-                          onClick={() => {
-                            // TODO: Implement order detail modal or page
-                            alert(`Chi tiết đơn hàng #${order.id}`)
+                          onClick={async () => {
+                            try {
+                              const result = await orders.getById(order.id)
+                              setSelectedOrder(result.data)
+                              setShowOrderModal(true)
+                            } catch (error) {
+                              alert('Lỗi: ' + error.message)
+                            }
                           }}
                         >
                           Xem
@@ -188,6 +195,140 @@ export default function OrdersPage() {
           </table>
         </div>
       </div>
+
+      {/* Order Detail Modal */}
+      {showOrderModal && selectedOrder && (
+        <div 
+          className="modal show d-block" 
+          tabIndex="-1" 
+          style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowOrderModal(false)
+              setSelectedOrder(null)
+            }
+          }}
+        >
+          <div className="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+              <div className="modal-header">
+                <h5 className="modal-title">Chi tiết đơn hàng #{selectedOrder.id}</h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={() => {
+                    setShowOrderModal(false)
+                    setSelectedOrder(null)
+                  }}
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div className="modal-body">
+                {/* Order Info */}
+                <div className="mb-4">
+                  <h6>Thông tin đơn hàng</h6>
+                  <div className="row">
+                    <div className="col-md-6">
+                      <p><strong>Trạng thái:</strong> <span className={`badge ${getStatusBadge(selectedOrder.status)} text-white`}>{getStatusText(selectedOrder.status)}</span></p>
+                      <p><strong>Thanh toán:</strong> <span className={`badge ${selectedOrder.paymentStatus === 'PAID' ? 'bg-success' : 'bg-warning'}`}>{selectedOrder.paymentStatus === 'PAID' ? 'Đã thanh toán' : 'Chờ thanh toán'}</span></p>
+                      <p><strong>Phương thức:</strong> {selectedOrder.paymentMethod === 'BANK_TRANSFER' ? 'Chuyển khoản' : 'COD'}</p>
+                    </div>
+                    <div className="col-md-6">
+                      <p><strong>Tổng tiền:</strong> <span className="text-danger fw-bold">{Number(selectedOrder.total).toLocaleString('vi-VN')} ₫</span></p>
+                      <p><strong>Ngày tạo:</strong> {new Date(selectedOrder.createdAt).toLocaleString('vi-VN')}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Shipping Address */}
+                {selectedOrder.shippingAddress && (
+                  <div className="mb-4">
+                    <h6>Địa chỉ giao hàng</h6>
+                    {(() => {
+                      try {
+                        const address = typeof selectedOrder.shippingAddress === 'string' 
+                          ? JSON.parse(selectedOrder.shippingAddress) 
+                          : selectedOrder.shippingAddress
+                        return (
+                          <div>
+                            <p><strong>Họ tên:</strong> {address.name}</p>
+                            <p><strong>Điện thoại:</strong> {address.phone}</p>
+                            <p><strong>Địa chỉ:</strong> {address.address}, {address.ward}, {address.district}, {address.province}</p>
+                          </div>
+                        )
+                      } catch {
+                        return <p className="text-muted">{selectedOrder.shippingAddress}</p>
+                      }
+                    })()}
+                  </div>
+                )}
+
+                {/* Order Items */}
+                <div>
+                  <h6>Sản phẩm</h6>
+                  <div className="table-responsive">
+                    <table className="table table-sm">
+                      <thead>
+                        <tr>
+                          <th>Sản phẩm</th>
+                          <th>Giá</th>
+                          <th>SL</th>
+                          <th>Tổng</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {selectedOrder.items?.map((item) => (
+                          <tr key={item.id}>
+                            <td>
+                              <div>
+                                <strong>{item.name}</strong>
+                                {/* Variant Info */}
+                                {item.attributes && (
+                                  <div className="text-muted small mt-1">
+                                    {item.attributes.color && (
+                                      <span className="me-2">Màu: {item.attributes.color}</span>
+                                    )}
+                                    {item.attributes.color && item.attributes.size && <span> • </span>}
+                                    {item.attributes.size && (
+                                      <span>Size: {item.attributes.size}</span>
+                                    )}
+                                  </div>
+                                )}
+                                <div className="text-muted small">SKU: {item.sku}</div>
+                              </div>
+                            </td>
+                            <td>{Number(item.price).toLocaleString('vi-VN')} ₫</td>
+                            <td>{item.quantity}</td>
+                            <td><strong>{(Number(item.price) * item.quantity).toLocaleString('vi-VN')} ₫</strong></td>
+                          </tr>
+                        ))}
+                      </tbody>
+                      <tfoot>
+                        <tr>
+                          <td colSpan="3" className="text-end"><strong>Tổng cộng:</strong></td>
+                          <td><strong>{Number(selectedOrder.total).toLocaleString('vi-VN')} ₫</strong></td>
+                        </tr>
+                      </tfoot>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => {
+                    setShowOrderModal(false)
+                    setSelectedOrder(null)
+                  }}
+                >
+                  Đóng
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

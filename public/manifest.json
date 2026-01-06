@@ -1,0 +1,27 @@
+{
+  "name": "Tân Thời Đại - Cửa hàng Balo, Túi xách chính hãng",
+  "short_name": "Tân Thời Đại",
+  "description": "Cửa hàng balo, túi xách, phụ kiện chính hãng. Sản phẩm đa dạng, giá tốt, giao hàng nhanh.",
+  "icons": [
+    {
+      "src": "/images/favicon-32x32-removebg-preview.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/favicon-32x32-removebg-preview.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/favicon-32x32-removebg-preview.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ff6600"
+}
+

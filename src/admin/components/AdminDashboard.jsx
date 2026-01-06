@@ -11,6 +11,7 @@ import ReviewsPage from '../pages/ReviewsPage'
 import AnnouncementsPage from '../pages/AnnouncementsPage'
 import TikTokVideosPage from '../pages/TikTokVideosPage'
 import BlogPage from '../pages/BlogPage'
+import BannersPage from '../pages/BannersPage'
 
 export default function AdminDashboard({ user, onLogout }) {
   const [currentPage, setCurrentPage] = useState('dashboard')
@@ -37,6 +38,8 @@ export default function AdminDashboard({ user, onLogout }) {
         return <TikTokVideosPage />
       case 'blog':
         return <BlogPage />
+      case 'banners':
+        return <BannersPage />
       default:
         return <DashboardHome />
     }

@@ -28,9 +28,9 @@ export default function ScrollToTop() {
     })
   }
 
-  // Social media links - replace with your actual links
-  const zaloLink = 'https://zalo.me/your-zalo-id' // Replace with your Zalo link
-  const facebookLink = 'https://facebook.com/your-page' // Replace with your Facebook page link
+  // Social media links
+  const zaloLink = 'https://zalo.me/0766616888'
+  const facebookLink = 'https://www.facebook.com/share/1bGrUW7n4B/'
 
   const handleSocialClick = (url) => {
     window.open(url, '_blank', 'noopener,noreferrer')
@@ -47,11 +47,28 @@ export default function ScrollToTop() {
             aria-label="Liên hệ Zalo"
             title="Liên hệ qua Zalo"
           >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-              <line x1="9" y1="10" x2="15" y2="10"/>
-              <line x1="9" y1="14" x2="13" y2="14"/>
-            </svg>
+            <img 
+              src="/images/Icon_of_Zalo.svg.png" 
+              alt="Zalo" 
+              style={{ 
+                width: '32px', 
+                height: '32px', 
+                objectFit: 'contain',
+                display: 'block'
+              }}
+              onError={(e) => {
+                // Fallback: ẩn ảnh và hiển thị SVG mặc định
+                e.target.style.display = 'none'
+                const fallbackSvg = `
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                    <line x1="9" y1="10" x2="15" y2="10"/>
+                    <line x1="9" y1="14" x2="13" y2="14"/>
+                  </svg>
+                `
+                e.target.parentElement.insertAdjacentHTML('beforeend', fallbackSvg)
+              }}
+            />
           </button>
 
           {/* Facebook Button */}

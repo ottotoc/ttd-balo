@@ -132,7 +132,7 @@ export default function ImageUpload({ value, onChange, label = 'Image', required
               if (e.target.src !== fullUrl) {
                 e.target.src = fullUrl
               }
-            }}
+            }} 
           />
           <div className="d-flex gap-2">
             <label className="btn btn-sm btn-outline-primary" style={{ cursor: 'pointer' }}>

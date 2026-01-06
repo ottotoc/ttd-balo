@@ -78,12 +78,12 @@ app.use(errorHandler);
 // Socket.IO connection handling
 io.on('connection', (socket) => {
   if (process.env.NODE_ENV === 'development') {
-    console.log('Client connected:', socket.id);
+  console.log('Client connected:', socket.id);
   }
 
   socket.on('disconnect', () => {
     if (process.env.NODE_ENV === 'development') {
-      console.log('Client disconnected:', socket.id);
+    console.log('Client disconnected:', socket.id);
     }
   });
 
@@ -91,7 +91,7 @@ io.on('connection', (socket) => {
   socket.on('join:order', (orderId) => {
     socket.join(`order:${orderId}`);
     if (process.env.NODE_ENV === 'development') {
-      console.log(`Client ${socket.id} joined order room: ${orderId}`);
+    console.log(`Client ${socket.id} joined order room: ${orderId}`);
     }
   });
 
@@ -99,7 +99,7 @@ io.on('connection', (socket) => {
   socket.on('join:product', (productId) => {
     socket.join(`product:${productId}`);
     if (process.env.NODE_ENV === 'development') {
-      console.log(`Client ${socket.id} joined product room: ${productId}`);
+    console.log(`Client ${socket.id} joined product room: ${productId}`);
     }
   });
 
