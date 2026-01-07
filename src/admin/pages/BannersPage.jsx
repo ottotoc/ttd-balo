@@ -11,6 +11,7 @@ export default function BannersPage() {
   const [editingId, setEditingId] = useState(null)
   const [showModal, setShowModal] = useState(false)
   const [toast, setToast] = useState(null)
+  const [selectedPosition, setSelectedPosition] = useState('hero')
   const [formData, setFormData] = useState({
     title: '',
     imageUrl: '',
@@ -22,12 +23,12 @@ export default function BannersPage() {
 
   useEffect(() => {
     fetchBanners()
-  }, [])
+  }, [selectedPosition])
 
   const fetchBanners = async () => {
     try {
       setLoading(true)
-      const response = await admin.banners.getAll({ position: 'hero' })
+      const response = await admin.banners.getAll({ position: selectedPosition })
       setBanners(response.data || [])
       setError(null)
     } catch (err) {
@@ -55,7 +56,7 @@ export default function BannersPage() {
         title: '',
         imageUrl: '',
         link: '',
-        position: 'hero',
+        position: selectedPosition,
         active: true,
         order: 0,
       })
@@ -108,7 +109,7 @@ export default function BannersPage() {
       title: '',
       imageUrl: '',
       link: '',
-      position: 'hero',
+      position: selectedPosition,
       active: true,
       order: 0,
     })
@@ -157,28 +158,43 @@ export default function BannersPage() {
       <div className="container-fluid py-4">
         <div className="row mb-4">
           <div className="col-12">
-            <div className="d-flex justify-content-between align-items-center">
+            <div className="d-flex justify-content-between align-items-center flex-wrap gap-3">
               <div>
-                <h2 className="mb-0">🖼️ Quản lý Banner Hero</h2>
+                <h2 className="mb-0">🖼️ Quản lý Banner</h2>
                 <p className="text-muted">Quản lý các banner slide trên trang chủ</p>
               </div>
-              <button
-                className="btn btn-primary"
-                onClick={() => {
-                  setEditingId(null)
-                  setFormData({
-                    title: '',
-                    imageUrl: '',
-                    link: '',
-                    position: 'hero',
-                    active: true,
-                    order: 0,
-                  })
-                  setShowModal(true)
-                }}
-              >
-                + Thêm Banner
-              </button>
+              <div className="d-flex gap-2 align-items-center">
+                <select
+                  className="form-select"
+                  value={selectedPosition}
+                  onChange={(e) => {
+                    setSelectedPosition(e.target.value)
+                    setFormData({ ...formData, position: e.target.value })
+                  }}
+                  style={{ width: 'auto' }}
+                >
+                  <option value="hero">Banner Hero (Đầu trang)</option>
+                  <option value="between-popular">Banner giữa - trên &quot;Sản phẩm phổ biến&quot;</option>
+                  <option value="between-new">Banner giữa - trên &quot;Sản phẩm mới về&quot;</option>
+                </select>
+                <button
+                  className="btn btn-primary"
+                  onClick={() => {
+                    setEditingId(null)
+                    setFormData({
+                      title: '',
+                      imageUrl: '',
+                      link: '',
+                      position: selectedPosition,
+                      active: true,
+                      order: 0,
+                    })
+                    setShowModal(true)
+                  }}
+                >
+                  + Thêm Banner
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -206,6 +222,7 @@ export default function BannersPage() {
                         <th>Ảnh</th>
                         <th>Tiêu đề</th>
                         <th>Link</th>
+                        <th>Vị trí</th>
                         <th>Thứ tự</th>
                         <th>Trạng thái</th>
                         <th>Hành động</th>
@@ -214,7 +231,7 @@ export default function BannersPage() {
                     <tbody>
                       {banners.length === 0 ? (
                         <tr>
-                          <td colSpan="6" className="text-center text-muted py-4">
+                          <td colSpan="7" className="text-center text-muted py-4">
                             Chưa có banner nào. Hãy thêm banner đầu tiên!
                           </td>
                         </tr>
@@ -254,6 +271,17 @@ export default function BannersPage() {
                               ) : (
                                 '-'
                               )}
+                            </td>
+                            <td>
+                              <span className="badge bg-info">
+                                {banner.position === 'hero'
+                                  ? 'Hero'
+                                  : banner.position === 'between-popular'
+                                  ? 'Giữa - trên Sản phẩm phổ biến'
+                                  : banner.position === 'between-new'
+                                  ? 'Giữa - trên Sản phẩm mới về'
+                                  : banner.position}
+                              </span>
                             </td>
                             <td>{banner.order}</td>
                             <td>
@@ -350,6 +378,22 @@ export default function BannersPage() {
                       />
                       <small className="form-text text-muted">
                         Link khi click vào banner (để trống nếu không cần)
+                      </small>
+                    </div>
+
+                    <div className="mb-3">
+                      <label className="form-label">Vị trí hiển thị</label>
+                      <select
+                        className="form-select"
+                        value={formData.position}
+                        onChange={(e) => setFormData({ ...formData, position: e.target.value })}
+                      >
+                        <option value="hero">Banner Hero (Đầu trang)</option>
+                        <option value="between-popular">Banner giữa - trên &quot;Sản phẩm phổ biến&quot;</option>
+                        <option value="between-new">Banner giữa - trên &quot;Sản phẩm mới về&quot;</option>
+                      </select>
+                      <small className="form-text text-muted">
+                        Chọn vị trí hiển thị banner trên trang chủ
                       </small>
                     </div>
 

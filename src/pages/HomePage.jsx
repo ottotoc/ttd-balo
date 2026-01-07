@@ -9,6 +9,7 @@ import BestSelling from '../components/sections/BestSelling.jsx'
 import SocialProofSection from '../components/sections/SocialProofSection.jsx'
 import DiscountForm from '../components/sections/DiscountForm.jsx'
 import MostPopular from '../components/sections/MostPopular.jsx'
+import BannerSlide from '../components/sections/BannerSlide.jsx'
 import JustArrived from '../components/sections/JustArrived.jsx'
 import TestimonialsSection from '../components/sections/TestimonialsSection.jsx'
 import BlogSection from '../components/sections/BlogSection.jsx'
@@ -29,7 +30,11 @@ export default function HomePage() {
       <BestSelling />
       <SocialProofSection />
       <DiscountForm />
+      {/* Banner trên \"Sản phẩm phổ biến\" */}
+      <BannerSlide position="between-popular" />
       <MostPopular />
+      {/* Banner trên \"Sản phẩm mới về\" */}
+      <BannerSlide position="between-new" />
       <JustArrived />
       <TestimonialsSection />
       <BlogSection />

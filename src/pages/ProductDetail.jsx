@@ -223,7 +223,6 @@ export default function ProductDetail() {
                     src={getImageUrl(product.images?.[selectedImage]?.url) || imageUrl} 
                     alt={product.name}
                     className="img-fluid rounded"
-                    style={{ width: '100%', objectFit: 'cover', maxHeight: '600px' }}
                     onError={(e) => {
                       e.target.src = '/images/product-thumb-1.png';
                     }}

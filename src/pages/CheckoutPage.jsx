@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import { useCart } from '../contexts/CartContext'
 import { orders, discounts } from '../lib/api'
+import { getImageUrl } from '../lib/imageUtils'
 import Header from '../components/layout/Header'
 import Footer from '../components/layout/Footer'
 import OffcanvasCart from '../components/layout/OffcanvasCart'
@@ -448,9 +449,9 @@ export default function CheckoutPage() {
                   {/* Order Items */}
                   <div className="order-items mb-3">
                     {cart.items.map((item) => {
-                      const imageUrl = item.product?.images?.find(img => img.isPrimary)?.url || 
-                                     item.product?.images?.[0]?.url || 
-                                     '/images/product-thumb-1.png'
+                      const primaryImage = item.product?.images?.find(img => img.isPrimary) || 
+                                         item.product?.images?.[0]
+                      const imageUrl = getImageUrl(primaryImage?.url, 'thumbnail') || '/images/product-thumb-1.png'
                       return (
                         <div key={item.id} className="d-flex mb-3 pb-3 border-bottom">
                           <div className="flex-shrink-0">
@@ -458,6 +459,9 @@ export default function CheckoutPage() {
                               src={imageUrl}
                               alt={item.product?.name}
                               style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '4px' }}
+                              onError={(e) => {
+                                e.target.src = '/images/product-thumb-1.png'
+                              }}
                             />
                           </div>
                           <div className="flex-grow-1 ms-3">

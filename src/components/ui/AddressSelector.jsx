@@ -68,14 +68,24 @@ export default function AddressSelector({
           required
         >
           <option value="">Chọn tỉnh/thành phố</option>
-          {provinces.map((province) => (
-            <option key={province.code} value={province.code}>
-              {province.name}
-            </option>
-          ))}
+          {loading && provinces.length === 0 ? (
+            <option disabled>Đang tải...</option>
+          ) : (
+            provinces.map((province) => (
+              <option key={province.code} value={province.code}>
+                {province.name}
+              </option>
+            ))
+          )}
         </select>
-        {loading && provinceCode && (
+        {loading && provinces.length === 0 && (
+          <small className="text-muted">Đang tải danh sách tỉnh/thành phố...</small>
+        )}
+        {loading && provinceCode && provinces.length > 0 && (
           <small className="text-muted">Đang tải quận/huyện...</small>
+        )}
+        {!loading && provinces.length === 0 && (
+          <small className="text-danger">Không thể tải danh sách tỉnh/thành phố. Vui lòng thử lại.</small>
         )}
       </div>
 

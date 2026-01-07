@@ -10,8 +10,9 @@ import { uploads } from '../../lib/api'
  * - label: Label của input (default: 'Image')
  * - required: Bắt buộc hay không (default: false)
  * - category: Category của ảnh - 'projects' | 'blog' | 'general' (default: 'general')
+ * - previewSize: { width, height } - kích thước khung preview (optional, default: auto)
  */
-export default function ImageUpload({ value, onChange, label = 'Image', required = false, category = 'general' }) {
+export default function ImageUpload({ value, onChange, label = 'Image', required = false, category = 'general', previewSize }) {
   const [uploading, setUploading] = useState(false)
   const [preview, setPreview] = useState(value || '')
   const [error, setError] = useState('')
@@ -113,19 +114,31 @@ export default function ImageUpload({ value, onChange, label = 'Image', required
       
       {preview ? (
         <div className="image-upload-preview">
-          <img 
-            src={getImageUrl(preview)} 
-            alt="Preview" 
-            style={{ 
-              maxWidth: '100%', 
-              maxHeight: '300px', 
-              objectFit: 'contain',
+          <div
+            style={{
+              width: previewSize?.width || '100%',
+              maxWidth: previewSize?.width || '100%',
+              height: previewSize?.height || 'auto',
+              maxHeight: previewSize?.height || 300,
               border: '1px solid #dee2e6',
               borderRadius: '8px',
-              padding: '8px',
-              marginBottom: '12px',
-              display: 'block'
-            }} 
+              padding: '4px',
+              marginBottom: '8px',
+              backgroundColor: '#fff',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <img 
+              src={getImageUrl(preview)} 
+              alt="Preview" 
+              style={{ 
+                maxWidth: '100%', 
+                maxHeight: '100%', 
+                objectFit: 'contain',
+                display: 'block'
+              }} 
             onError={(e) => {
               // Nếu ảnh không load được, thử với full URL
               const fullUrl = getImageUrl(preview)
@@ -133,7 +146,8 @@ export default function ImageUpload({ value, onChange, label = 'Image', required
                 e.target.src = fullUrl
               }
             }} 
-          />
+            />
+          </div>
           <div className="d-flex gap-2">
             <label className="btn btn-sm btn-outline-primary" style={{ cursor: 'pointer' }}>
               <input

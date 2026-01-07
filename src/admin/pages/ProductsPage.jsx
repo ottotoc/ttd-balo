@@ -31,7 +31,7 @@ export default function ProductsPage() {
     stock: 0,
     categoryId: '',
     brandId: '',
-    imageUrl: '',
+    images: [],
     shortDesc: '',
     description: '',
     featured: false,
@@ -100,7 +100,7 @@ export default function ProductsPage() {
       stock: 0,
       categoryId: '',
       brandId: '',
-      imageUrl: '',
+      images: [],
       shortDesc: '',
       description: '',
       featured: false,
@@ -137,7 +137,11 @@ export default function ProductsPage() {
       stock: product.stock || 0,
       categoryId: product.category?.id || '',
       brandId: product.brand?.id || '',
-      imageUrl: product.images?.[0]?.url || '',
+      images: (product.images || []).map((img, idx) => ({
+        url: img.url,
+        isPrimary: img.isPrimary ?? idx === 0,
+        position: idx,
+      })),
       shortDesc: product.shortDesc || '',
       description: product.description || '',
       featured: !!product.featured,
@@ -184,12 +188,57 @@ export default function ProductsPage() {
     }
   }
 
+  // Images helpers
+  const ensureAtLeastOneImage = (images) => {
+    if (!images || images.length === 0) {
+      return [{ url: '', isPrimary: true, position: 0 }]
+    }
+    return images
+  }
+
+  const handleImageChange = (index, url) => {
+    setForm(prev => {
+      const images = ensureAtLeastOneImage(prev.images)
+      const next = images.map((img, idx) =>
+        idx === index ? { ...(img || {}), url } : img
+      )
+      return { ...prev, images: next }
+    })
+  }
+
+  const handleAddImage = () => {
+    setForm(prev => {
+      const images = ensureAtLeastOneImage(prev.images)
+      return {
+        ...prev,
+        images: [
+          ...images,
+          { url: '', isPrimary: false, position: images.length },
+        ],
+      }
+    })
+  }
+
+  const handleRemoveImage = (index) => {
+    setForm(prev => {
+      const images = ensureAtLeastOneImage(prev.images).filter((_, idx) => idx !== index)
+      // Recalculate primary & position: luôn coi ảnh đầu là primary
+      const normalized = images.map((img, idx) => ({
+        ...img,
+        isPrimary: idx === 0,
+        position: idx,
+      }))
+      return { ...prev, images: normalized }
+    })
+  }
+
   const handleSubmitForm = async (e) => {
     e.preventDefault()
     
-    // Validate image
-    if (!form.imageUrl) {
-      alert('⚠️ Vui lòng upload ảnh sản phẩm')
+    // Validate images
+    const images = ensureAtLeastOneImage(form.images)
+    if (!images[0].url) {
+      alert('⚠️ Vui lòng upload ít nhất 1 ảnh sản phẩm (ảnh đầu tiên)')
       return
     }
     
@@ -209,8 +258,14 @@ export default function ProductsPage() {
         featured: !!form.featured,
         published: !!form.published,
         displaySections: form.displaySections && form.displaySections.length > 0 ? form.displaySections : [],
-        // Thêm images array
-        images: form.imageUrl ? [{ url: form.imageUrl, isPrimary: true, position: 0 }] : undefined,
+        // Thêm images array (nhiều ảnh)
+        images: images
+          .filter(img => img.url)
+          .map((img, idx) => ({
+            url: img.url,
+            isPrimary: idx === 0,
+            position: idx,
+          })),
       }
 
       // Thêm variants vào payload nếu có
@@ -478,15 +533,71 @@ export default function ProductsPage() {
             </div>
             <form onSubmit={handleSubmitForm}>
               <div className="modal-body">
-                {/* Image Upload - Full Width */}
+                {/* Images Upload - Multiple (compact grid) */}
                 <div className="form-group-full">
-                  <ImageUpload
-                    value={form.imageUrl}
-                    onChange={(url) => setForm(prev => ({ ...prev, imageUrl: url }))}
-                    label="Ảnh sản phẩm"
-                    required={true}
-                    category="projects"
-                  />
+                  <label className="fw-bold d-block mb-1">
+                    Ảnh sản phẩm <span className="text-danger">*</span>
+                  </label>
+                  <small className="text-muted d-block mb-3">
+                    Ảnh đầu tiên sẽ là ảnh chính, các ảnh sau là gallery chi tiết. Nhấn &quot;+ Thêm ảnh phụ&quot; để thêm nhiều ảnh.
+                  </small>
+
+                  <div
+                    className="product-images-grid"
+                    style={{
+                      display: 'flex',
+                      flexWrap: 'wrap',
+                      gap: '16px',
+                    }}
+                  >
+                    {ensureAtLeastOneImage(form.images).map((img, index) => (
+                      <div
+                        key={index}
+                        style={{
+                          flex: '1 1 260px',
+                          maxWidth: '320px',
+                          minWidth: '240px',
+                        }}
+                      >
+                        <div className="d-flex justify-content-between align-items-center mb-1">
+                          <span style={{ fontSize: '0.9rem' }}>
+                            Ảnh {index + 1}{' '}
+                            {index === 0 && (
+                              <span className="badge bg-primary ms-1">Ảnh chính</span>
+                            )}
+                          </span>
+                          {index > 0 && (
+                            <button
+                              type="button"
+                              className="btn btn-xs btn-outline-danger"
+                              style={{ fontSize: '0.8rem', padding: '2px 6px' }}
+                              onClick={() => handleRemoveImage(index)}
+                            >
+                              Xóa
+                            </button>
+                          )}
+                        </div>
+                        <div style={{ border: '1px dashed #dee2e6', borderRadius: 8, padding: 6 }}>
+                          <ImageUpload
+                            value={img.url}
+                            onChange={(url) => handleImageChange(index, url)}
+                            label=""
+                            required={index === 0}
+                            category="projects"
+                            previewSize={{ width: 180, height: 180 }}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-outline-primary mt-3"
+                    onClick={handleAddImage}
+                  >
+                    + Thêm ảnh phụ
+                  </button>
                 </div>
                 
                 {/* Form Grid - 2 Columns */}

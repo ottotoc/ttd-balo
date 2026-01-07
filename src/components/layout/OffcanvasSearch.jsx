@@ -2,7 +2,14 @@ import React from 'react'
 
 export default function OffcanvasSearch() {
   return (
-    <div className="offcanvas offcanvas-end" data-bs-scroll="true" tabIndex="-1" id="offcanvasSearch" aria-labelledby="Search">
+    <div 
+      className="offcanvas offcanvas-end" 
+      data-bs-scroll="true" 
+      tabIndex="-1" 
+      id="offcanvasSearch" 
+      aria-labelledby="Search"
+      style={{ zIndex: 1110 }}
+    >
       <div className="offcanvas-header justify-content-center">
         <button type="button" className="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
       </div>

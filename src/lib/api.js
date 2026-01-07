@@ -193,6 +193,13 @@ export const tiktokVideos = {
   getActive: () => apiCall('/api/tiktok-videos/active'),
 };
 
+// ========== ADDRESSES (Vietnam) ==========
+export const addresses = {
+  getProvinces: () => apiCall('/api/addresses/provinces'),
+  getDistricts: (provinceCode) => apiCall(`/api/addresses/provinces/${provinceCode}/districts`),
+  getWards: (districtCode) => apiCall(`/api/addresses/districts/${districtCode}/wards`),
+};
+
 export const blog = {
   getAll: (params = {}) => {
     const query = new URLSearchParams(params).toString();
@@ -413,5 +420,6 @@ export default {
   uploads,
   announcements,
   tiktokVideos,
+  addresses,
 };
 

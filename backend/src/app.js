@@ -60,6 +60,7 @@ app.use('/api/tiktok-videos', require('./modules/tiktok/tiktok.routes'));
 app.use('/api/blog', require('./modules/blog/blog.routes'));
 app.use('/api/admin', require('./modules/admin/admin.routes'));
 app.use('/api/uploads', require('./modules/uploads/uploads.routes'));
+app.use('/api/addresses', require('./modules/addresses/addresses.routes'));
 app.use('/api', require('./modules/public/public.routes'));
 
 // 404 handler
